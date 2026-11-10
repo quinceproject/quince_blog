@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Quince\Blog\Controller\Admin;
 
 use Quince\Blog\Settings\BlogLayoutSettings;
+use Quince\Blog\Settings\SeoSettings;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,11 +21,16 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/** Szerokość strony wpisu: ile kolumn silnika zajmuje treść, ile zdjęcie. */
+/**
+ * Ustawienia bloga: szerokość strony wpisu, powiązane wpisy oraz tytuł i opis
+ * listy wpisów i stron tagów w wynikach wyszukiwania.
+ */
 class SettingsController extends BlogBaseController
 {
-    public function __construct(private readonly BlogLayoutSettings $settings)
-    {
+    public function __construct(
+        private readonly BlogLayoutSettings $settings,
+        private readonly SeoSettings $seo
+    ) {
     }
 
     public function indexAction(): Response
@@ -34,6 +40,8 @@ class SettingsController extends BlogBaseController
             'contentColumns' => $this->settings->contentColumns(),
             'imageColumns' => $this->settings->imageColumns(),
             'relatedCount' => $this->settings->relatedCount(),
+            'languages' => $this->languages(),
+            'seo' => $this->seo->all(),
         ]);
     }
 
@@ -46,6 +54,7 @@ class SettingsController extends BlogBaseController
         }
 
         $this->settings->save($request->request->all());
+        $this->seo->save($request->request->all(), array_column($this->languages(), 'id_lang'));
         $this->addFlash('success', $this->trans('Settings saved.', self::DOMAIN));
 
         return $this->redirectToRoute('quince_blog_settings');

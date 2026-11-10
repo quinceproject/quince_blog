@@ -94,14 +94,16 @@ class Quince_BlogTagModuleFrontController extends ModuleFrontController
         }
         unset($p);
 
-        $title = sprintf($this->trans('#%s — Blog', [], 'Modules.Quinceblog.Shop'), $tag['name']);
+        $title = (new \Quince\Blog\Settings\SeoSettings())->tagTitle($idLang, (string) $tag['name']);
+        $description = sprintf($this->trans('Posts tagged with %s', [], 'Modules.Quinceblog.Shop'), $tag['name']);
         $this->context->smarty->assign([
             'blog_tag' => $tag,
             'blog_posts' => $posts,
             'blog_pagination' => Seo::buildPagination($page, $perPage, $total, Seo::tagUrl($slug, $this->context)),
             'meta_title' => $title,
-            'meta_description' => sprintf($this->trans('Posts tagged with %s', [], 'Modules.Quinceblog.Shop'), $tag['name']),
+            'meta_description' => $description,
         ]);
+        Seo::applyPageMeta($this->context, $title, $description);
 
         $this->setTemplate('module:quince_blog/views/templates/front/tag.tpl');
     }

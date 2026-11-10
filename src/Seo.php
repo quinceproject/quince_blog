@@ -14,6 +14,7 @@ namespace Quince\Blog;
 use Configuration;
 use Context;
 use Language;
+use Quince\Blog\Settings\SeoSettings;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -72,14 +73,43 @@ final class Seo
         ];
     }
 
+    /**
+     * Tytuł i opis strony do `<title>` i `<meta name="description">`.
+     *
+     * Motyw drukuje `$page.meta`, a tę tablicę `FrontController::initContent()`
+     * przypisuje, zanim kontroler bloga wie, co pokazuje. Samo `meta_title`
+     * w Smarty motyw pomija, więc poprawiamy już przypisaną tablicę.
+     */
+    public static function applyPageMeta(Context $context, string $title, string $description): void
+    {
+        $page = $context->smarty->getTemplateVars('page');
+        if (!is_array($page)) {
+            return;
+        }
+
+        if ($title !== '') {
+            $page['meta']['title'] = $title;
+        }
+        $page['meta']['description'] = $description;
+        $context->smarty->assign('page', $page);
+    }
+
+    /** Tytuł listy wpisów z ustawień bloga; bez ustawienia samo „Blog”. Używa go też kanał RSS. */
+    public static function listTitle(Context $context): string
+    {
+        $tytul = (new SeoSettings())->get('list_title', (int) $context->language->id);
+
+        return $tytul !== '' ? $tytul : $context->getTranslator()->trans('Blog', [], 'Modules.Quinceblog.Shop');
+    }
+
     public static function buildListMeta(Context $context): array
     {
-        $shopName = (string) Configuration::get('PS_SHOP_NAME');
-        $blog = $context->getTranslator()->trans('Blog', [], 'Modules.Quinceblog.Shop');
+        $seo = new SeoSettings();
+        $idLang = (int) $context->language->id;
 
         return [
-            'title' => $blog . ($shopName ? ' — ' . $shopName : ''),
-            'description' => '',
+            'title' => self::listTitle($context),
+            'description' => $seo->get('list_description', $idLang),
             'canonical' => self::listUrl($context),
             'og_image' => '',
             'og_type' => 'website',

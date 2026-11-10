@@ -2,8 +2,15 @@
    (Wygląd → liczba kolumn). Treść i zdjęcie osobno. #}
 {% extends '@Modules/quince_engine/views/templates/admin/layout.html.twig' %}
 {% import '@Modules/quince_engine/views/templates/admin/_macros/icons.html.twig' as icons %}
+{% import '@Modules/quince_engine/views/templates/admin/_macros/fields.html.twig' as fields %}
 
 {% trans_default_domain 'Modules.Quinceblog.Admin' %}
+
+{# Pola wielojęzyczne przełączają język przez Alpine. #}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('../modules/quince_engine/views/js/vendor/alpine.min.js') ~ qcVer }}" defer></script>
+{% endblock %}
 
 {% block quince_intro %}
     <div class="qc-alert qc-alert-info">
@@ -64,6 +71,17 @@
                        name="related_count" value="{{ relatedCount }}">
                 <div class="qc-hint">{{ 'The teasers always stretch to fill the full text width, no matter the number.'|trans }}</div>
             </div>
+        </div>
+    </div>
+
+    <div class="qc-card">
+        <div class="qc-card-head">
+            <div><div class="qc-card-title">{{ 'Blog in search results'|trans }}</div></div>
+        </div>
+        <div class="qc-card-body qc-stack">
+            {{ fields.multilang('list_title', 'Post list title'|trans, languages, seo.list_title, '', 'Shown in the browser tab and in search results. Left empty: “Blog”. The RSS feed uses the same title.'|trans) }}
+            {{ fields.multilangArea('list_description', 'Post list description'|trans, languages, seo.list_description, '', 'Shown under the title in search results. Left empty: no description.'|trans, 2) }}
+            {{ fields.multilang('tag_title', 'Tag page title'|trans, languages, seo.tag_title, '', '%tag% is replaced by the tag name. Left empty: “#tag name”.'|trans) }}
         </div>
     </div>
 </form>

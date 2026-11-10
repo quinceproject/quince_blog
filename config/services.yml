@@ -26,6 +26,10 @@ services:
     class: Quince\Blog\Controller\Admin\SettingsController
     arguments:
       - '@Quince\Blog\Settings\BlogLayoutSettings'
+      - '@Quince\Blog\Settings\SeoSettings'
+
+  Quince\Blog\Settings\SeoSettings:
+    class: Quince\Blog\Settings\SeoSettings
 
   Quince\Blog\Settings\BlogLayoutSettings:
     class: Quince\Blog\Settings\BlogLayoutSettings

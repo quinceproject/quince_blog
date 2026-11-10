@@ -4,6 +4,25 @@ All notable changes to this module are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the versioning follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2026-11-10
+
+### Added
+
+- Settings: the title and description of the post list and the title of a tag page,
+  per language, under "Blog in search results". The RSS feed uses the same title and
+  description.
+
+### Fixed
+
+- Blog pages show their own title and description in the browser tab and in search
+  results. Until now the theme printed the shop name on every blog page.
+
+### Changed
+
+- Polish translation completed: the texts added since the previous translation are now translated.
+- Texts no longer use long dashes. An empty value in a table shows a hyphen, and
+  subcategories are indented with a hyphen.
+
 ## [0.4.0] - 2026-11-10
 
 First public release.

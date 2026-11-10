@@ -62,10 +62,6 @@
       </trans-unit>
 
       <!-- Strona tagu (tag.php, meta i tytuł). -->
-      <trans-unit id="quince.blog.tag_title">
-        <source>#%s — Blog</source>
-        <target>#%s — Blog</target>
-      </trans-unit>
       <trans-unit id="quince.blog.tag_description">
         <source>Posts tagged with %s</source>
         <target>Wpisy oznaczone tagiem %s</target>

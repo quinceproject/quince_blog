@@ -26,7 +26,6 @@ class Quince_BlogFeedModuleFrontController extends ModuleFrontController
     {
         $idShop = (int) $this->context->shop->id;
         $idLang = (int) $this->context->language->id;
-        $shopName = (string) Configuration::get('PS_SHOP_NAME');
 
         $posts = Repository::listPosts([
             'id_shop' => $idShop,
@@ -39,9 +38,10 @@ class Quince_BlogFeedModuleFrontController extends ModuleFrontController
         echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         echo '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">' . "\n";
         echo "<channel>\n";
-        echo '  <title>' . htmlspecialchars($shopName . ' — ' . $this->trans('Blog', [], 'Modules.Quinceblog.Shop'), ENT_XML1 | ENT_QUOTES, 'UTF-8') . "</title>\n";
+        echo '  <title>' . htmlspecialchars(Seo::listTitle($this->context), ENT_XML1 | ENT_QUOTES, 'UTF-8') . "</title>\n";
         echo '  <link>' . htmlspecialchars(Seo::listUrl($this->context), ENT_XML1 | ENT_QUOTES, 'UTF-8') . "</link>\n";
-        echo "  <description></description>\n";
+        $opis = (new \Quince\Blog\Settings\SeoSettings())->get('list_description', $idLang);
+        echo '  <description>' . htmlspecialchars($opis, ENT_XML1 | ENT_QUOTES, 'UTF-8') . "</description>\n";
         echo '  <language>' . htmlspecialchars($this->context->language->iso_code, ENT_XML1 | ENT_QUOTES, 'UTF-8') . "</language>\n";
         echo '  <atom:link href="' . htmlspecialchars(Seo::listUrl($this->context) . '/feed.xml', ENT_XML1 | ENT_QUOTES, 'UTF-8') . '" rel="self" type="application/rss+xml"/>' . "\n";
 

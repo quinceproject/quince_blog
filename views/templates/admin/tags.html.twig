@@ -57,7 +57,7 @@
             <tbody>
                 {% for tag in rows %}
                     <tr>
-                        <td>{{ tag.lang[languages|filter(l => l.default)|first.id_lang].name|default('—') }}</td>
+                        <td>{{ tag.lang[languages|filter(l => l.default)|first.id_lang].name|default('-') }}</td>
                         <td>{{ tag.post_count }}</td>
                         <td>
                             <div class="qc-row-actions" style="opacity:1">

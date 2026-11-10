@@ -140,6 +140,7 @@ class Quince_BlogPostModuleFrontController extends ModuleFrontController
 
         $meta = Seo::buildPostMeta($post, $this->context, $post['images'] ?? []);
         $this->context->smarty->assign(['meta_title' => $meta['title'], 'meta_description' => $meta['description']]);
+        Seo::applyPageMeta($this->context, $meta['title'], $meta['description']);
 
         $perLang = $this->fetchPostLangSlugs($idPost);
         $hreflangs = Seo::buildHreflangs($perLang, 'post', $this->context);

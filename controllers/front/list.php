@@ -55,6 +55,7 @@ class Quince_BlogListModuleFrontController extends ModuleFrontController
             'meta_title' => $meta['title'],
             'meta_description' => $meta['description'],
         ]);
+        Seo::applyPageMeta($this->context, $meta['title'], $meta['description']);
 
         $this->setTemplate('module:quince_blog/views/templates/front/list.tpl');
     }

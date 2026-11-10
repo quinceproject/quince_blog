@@ -42,7 +42,7 @@
                     <label class="qc-label" for="q-parent">{{ 'Parent category'|trans }}</label>
                     <div class="qc-select-wrap">
                         <select id="q-parent" name="id_parent" class="qc-field-base qc-select qc-focusable">
-                            <option value="0">{{ '— top level —'|trans }}</option>
+                            <option value="0">{{ '(top level)'|trans }}</option>
                             {% for p in parents %}
                                 <option value="{{ p.id_category }}" {{ category.id_parent == p.id_category ? 'selected' }}>{{ p.name }}</option>
                             {% endfor %}

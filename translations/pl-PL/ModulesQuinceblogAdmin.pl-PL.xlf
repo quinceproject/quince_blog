@@ -319,8 +319,8 @@
         <target>Kategoria nadrzędna</target>
       </trans-unit>
       <trans-unit id="quince.blog.top_level">
-        <source>— top level —</source>
-        <target>— poziom główny —</target>
+        <source>(top level)</source>
+        <target>(poziom główny)</target>
       </trans-unit>
       <trans-unit id="quince.blog.colour_optional">
         <source>Colour (optional)</source>
@@ -521,6 +521,76 @@
       <trans-unit id="quince.blog.flash_settings_saved">
         <source>Settings saved.</source>
         <target>Ustawienia zapisane.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.module_name">
+        <source>Quince Blog</source>
+        <target>Quince Blog</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.module_description">
+        <source>Multilingual, multistore blog: posts, categories, tags, teasers to embed anywhere.</source>
+        <target>Wielojęzyczny blog dla wielu sklepów: wpisy, kategorie, tagi i zajawki do osadzenia w dowolnym miejscu.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.uninstall_confirm">
+        <source>Uninstall the module? All blog data will be removed.</source>
+        <target>Odinstalować moduł? Wszystkie dane bloga zostaną usunięte.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.description">
+        <source>Description</source>
+        <target>Opis</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.use_this_colour">
+        <source>Use this colour</source>
+        <target>Użyj tego koloru</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.category_colour_hint">
+        <source>Shown as the category badge on post teasers. Leave unchecked to use the shop brand colour.</source>
+        <target>Pokazywany jako etykieta kategorii na zajawkach wpisów. Zostaw niezaznaczone, a użyty zostanie kolor marki sklepu.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.total_posts">
+        <source>%total% posts</source>
+        <target>Wpisy: %total%</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.cancel">
+        <source>Cancel</source>
+        <target>Anuluj</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.heading">
+        <source>Heading</source>
+        <target>Nagłówek</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_invalid_token">
+        <source>Invalid security token, please try again.</source>
+        <target>Nieprawidłowy token bezpieczeństwa, spróbuj ponownie.</target>
+      </trans-unit>
+
+      <!-- Ustawienia: blog w wynikach wyszukiwania. -->
+      <trans-unit id="quince.blog.seo.card">
+        <source>Blog in search results</source>
+        <target>Blog w wynikach wyszukiwania</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.seo.list_title">
+        <source>Post list title</source>
+        <target>Tytuł listy wpisów</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.seo.list_title_hint">
+        <source>Shown in the browser tab and in search results. Left empty: “Blog”. The RSS feed uses the same title.</source>
+        <target>Widać go na karcie przeglądarki i w wynikach wyszukiwania. Puste pole: „Blog”. Kanał RSS ma ten sam tytuł.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.seo.list_description">
+        <source>Post list description</source>
+        <target>Opis listy wpisów</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.seo.list_description_hint">
+        <source>Shown under the title in search results. Left empty: no description.</source>
+        <target>Widać go pod tytułem w wynikach wyszukiwania. Puste pole: bez opisu.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.seo.tag_title">
+        <source>Tag page title</source>
+        <target>Tytuł strony tagu</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.seo.tag_title_hint">
+        <source>%tag% is replaced by the tag name. Left empty: “#tag name”.</source>
+        <target>W miejsce %tag% wchodzi nazwa tagu. Puste pole: „#nazwa tagu”.</target>
       </trans-unit>
 
     </body>

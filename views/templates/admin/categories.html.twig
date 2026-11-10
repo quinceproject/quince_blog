@@ -25,7 +25,7 @@
             {% for cat in rows %}
                 <tr>
                     <td>
-                        {% if cat.id_parent %}<span class="qc-muted">— </span>{% endif %}
+                        {% if cat.id_parent %}<span class="qc-muted">- </span>{% endif %}
                         <a href="{{ path('quince_blog_categories_edit', {'id': cat.id_category}) }}"><strong>{{ cat.name }}</strong></a>
                         {% if cat.color %}<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:{{ cat.color }};margin-inline-start:6px;vertical-align:middle"></span>{% endif %}
                     </td>
