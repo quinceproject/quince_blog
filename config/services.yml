@@ -1,0 +1,31 @@
+services:
+  _defaults:
+    public: true
+    autoconfigure: true
+    autowire: true
+    tags: ['controller.service_arguments']
+
+  Quince\Blog\Controller\Admin\PostsController:
+    class: Quince\Blog\Controller\Admin\PostsController
+
+  Quince\Blog\Controller\Admin\CategoriesController:
+    class: Quince\Blog\Controller\Admin\CategoriesController
+
+  Quince\Blog\Controller\Admin\TagsController:
+    class: Quince\Blog\Controller\Admin\TagsController
+
+  Quince\Blog\Controller\Admin\TeasersController:
+    class: Quince\Blog\Controller\Admin\TeasersController
+    arguments:
+      - '@Quince\Blog\Settings\TeaserSettings'
+
+  Quince\Blog\Settings\TeaserSettings:
+    class: Quince\Blog\Settings\TeaserSettings
+
+  Quince\Blog\Controller\Admin\SettingsController:
+    class: Quince\Blog\Controller\Admin\SettingsController
+    arguments:
+      - '@Quince\Blog\Settings\BlogLayoutSettings'
+
+  Quince\Blog\Settings\BlogLayoutSettings:
+    class: Quince\Blog\Settings\BlogLayoutSettings

@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-US" target-language="pl-PL" datatype="plaintext" original="ModulesQuinceblogAdmin">
+    <body>
+
+      <!-- Wspólne: przyciski i etykiety powtarzane na kilku ekranach. -->
+      <trans-unit id="quince.blog.save">
+        <source>Save</source>
+        <target>Zapisz</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.save_changes">
+        <source>Save changes</source>
+        <target>Zapisz zmiany</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.preview">
+        <source>Preview</source>
+        <target>Podgląd</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.back_to_list">
+        <source>Back to list</source>
+        <target>Wróć do listy</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.name">
+        <source>Name</source>
+        <target>Nazwa</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.title">
+        <source>Title</source>
+        <target>Tytuł</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.status">
+        <source>Status</source>
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.published">
+        <source>Published</source>
+        <target>Opublikowany</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.draft">
+        <source>Draft</source>
+        <target>Szkic</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.scheduled">
+        <source>Scheduled</source>
+        <target>Zaplanowany</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.category">
+        <source>Category</source>
+        <target>Kategoria</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.categories">
+        <source>Categories</source>
+        <target>Kategorie</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.tags">
+        <source>Tags</source>
+        <target>Tagi</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.posts_count">
+        <source>Posts</source>
+        <target>Wpisy</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.yes">
+        <source>Yes</source>
+        <target>Tak</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.no">
+        <source>No</source>
+        <target>Nie</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.none">
+        <source>None</source>
+        <target>Brak</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.selected">
+        <source>selected</source>
+        <target>zaznaczonych</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.columns">
+        <source>Columns</source>
+        <target>Kolumny</target>
+      </trans-unit>
+
+      <!-- Lista wpisów (posts.html.twig). -->
+      <trans-unit id="quince.blog.posts_nav">
+        <source>Posts</source>
+        <target>Wpisy</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.new_post">
+        <source>New post</source>
+        <target>Nowy wpis</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.search_by_title">
+        <source>Search by title...</source>
+        <target>Szukaj po tytule...</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.all_statuses">
+        <source>All statuses</source>
+        <target>Wszystkie statusy</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.all_categories">
+        <source>All categories</source>
+        <target>Wszystkie kategorie</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.filter">
+        <source>Filter</source>
+        <target>Filtruj</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.clear">
+        <source>Clear</source>
+        <target>Wyczyść</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.delete_selected">
+        <source>Delete selected</source>
+        <target>Usuń zaznaczone</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.set_as_draft">
+        <source>Set as draft</source>
+        <target>Oznacz jako szkic</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.publish">
+        <source>Publish</source>
+        <target>Opublikuj</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.select_all_rows">
+        <source>Select all rows on this page</source>
+        <target>Zaznacz wszystkie wiersze na tej stronie</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.views_col">
+        <source>Views</source>
+        <target>Wyświetlenia</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.no_post_matches">
+        <source>No post matches the filter.</source>
+        <target>Żaden wpis nie pasuje do filtra.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.no_post_yet">
+        <source>No post yet. The first one appears here once you write it.</source>
+        <target>Nie ma jeszcze żadnego wpisu. Pierwszy pojawi się tu, gdy go napiszesz.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.remove_post_confirm">
+        <source>Remove this post?</source>
+        <target>Usunąć ten wpis?</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.pagination_info">
+        <source>Page %page% of %pages%, %total% posts</source>
+        <target>Strona %page% z %pages%, %total% wpisów</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.paren_open">
+        <source>(</source>
+        <target>(</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.untitled">
+        <source>untitled</source>
+        <target>bez tytułu</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.paren_close">
+        <source>)</source>
+        <target>)</target>
+      </trans-unit>
+
+      <!-- Edycja wpisu (post-edit.html.twig). -->
+      <trans-unit id="quince.blog.content">
+        <source>Content</source>
+        <target>Treść</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.slug">
+        <source>Slug</source>
+        <target>Slug</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.left_empty_from_title">
+        <source>Left empty, built from the title.</source>
+        <target>Zostawione puste, zbudowane z tytułu.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.left_empty_from_name">
+        <source>Left empty, built from the name.</source>
+        <target>Zostawione puste, zbudowane z nazwy.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.excerpt">
+        <source>Excerpt</source>
+        <target>Zajawka</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.shown_on_teasers">
+        <source>Shown on teasers and listing pages.</source>
+        <target>Pokazywana na zajawkach i stronach listy.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.faq_card">
+        <source>FAQ</source>
+        <target>FAQ</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.add_question">
+        <source>Add question</source>
+        <target>Dodaj pytanie</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.no_questions_yet">
+        <source>No questions yet.</source>
+        <target>Na razie nie ma żadnych pytań.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.question">
+        <source>Question</source>
+        <target>Pytanie</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.answer">
+        <source>Answer</source>
+        <target>Odpowiedź</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.shown_as_accordion">
+        <source>Shown as an accordion under the post.</source>
+        <target>Pokazywane jako akordeon pod wpisem.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.section_heading">
+        <source>Section heading</source>
+        <target>Nagłówek sekcji</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.faq_placeholder">
+        <source>Frequently Asked Questions</source>
+        <target>Najczęściej zadawane pytania</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.seo">
+        <source>SEO</source>
+        <target>SEO</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.meta_title">
+        <source>Meta title</source>
+        <target>Tytuł meta</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.meta_description">
+        <source>Meta description</source>
+        <target>Opis meta</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.robots">
+        <source>Robots</source>
+        <target>Robots</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.publishing">
+        <source>Publishing</source>
+        <target>Publikacja</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.publish_date">
+        <source>Publish date</source>
+        <target>Data publikacji</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.featured_image">
+        <source>Featured image</source>
+        <target>Zdjęcie wyróżnione</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.no_image_yet">
+        <source>No image yet</source>
+        <target>Jeszcze bez zdjęcia</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.image_formats">
+        <source>JPG, PNG, WEBP or AVIF, up to 5 MB.</source>
+        <target>JPG, PNG, WEBP lub AVIF, do 5 MB.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.choose_image">
+        <source>Choose an image</source>
+        <target>Wybierz zdjęcie</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.caption">
+        <source>Caption</source>
+        <target>Podpis</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.shown_under_photo">
+        <source>Shown under the photo</source>
+        <target>Pokazywany pod zdjęciem</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.no_category_exists">
+        <source>No category exists yet.</source>
+        <target>Nie ma jeszcze żadnej kategorii.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.no_tag_exists">
+        <source>No tag exists yet.</source>
+        <target>Nie ma jeszcze żadnego tagu.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.featured_products_admin">
+        <source>Featured products</source>
+        <target>Polecane produkty</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.product_ids_hint">
+        <source>Product IDs, picked from the catalogue.</source>
+        <target>Identyfikatory produktów, wybrane z katalogu.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.product_id">
+        <source>Product ID</source>
+        <target>ID produktu</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.lookup_product_id">
+        <source>Look up the product ID on the products list, then type it here.</source>
+        <target>Sprawdź ID produktu na liście produktów, a potem wpisz je tutaj.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.max_zero_hint">
+        <source>0 shows every product picked above, with no limit.</source>
+        <target>0 pokazuje wszystkie produkty wybrane powyżej, bez limitu.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.maximum_shown">
+        <source>Maximum shown</source>
+        <target>Maksymalnie pokazanych</target>
+      </trans-unit>
+
+      <!-- Kategorie (categories.html.twig, category-edit.html.twig). -->
+      <trans-unit id="quince.blog.new_category">
+        <source>New category</source>
+        <target>Nowa kategoria</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.no_category_yet">
+        <source>No category yet.</source>
+        <target>Jeszcze żadnej kategorii.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.active_col">
+        <source>Active</source>
+        <target>Aktywna</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.visible_in_shop">
+        <source>Visible in the shop</source>
+        <target>Widoczna w sklepie</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.parent_category">
+        <source>Parent category</source>
+        <target>Kategoria nadrzędna</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.top_level">
+        <source>— top level —</source>
+        <target>— poziom główny —</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.colour_optional">
+        <source>Colour (optional)</source>
+        <target>Kolor (opcjonalnie)</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.remove_category_confirm">
+        <source>Remove this category?</source>
+        <target>Usunąć tę kategorię?</target>
+      </trans-unit>
+
+      <!-- Tagi (tags.html.twig). -->
+      <trans-unit id="quince.blog.new_tag">
+        <source>New tag</source>
+        <target>Nowy tag</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.edit_tag">
+        <source>Edit tag</source>
+        <target>Edytuj tag</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.no_tag_yet">
+        <source>No tag yet.</source>
+        <target>Jeszcze żadnego tagu.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.remove_tag_confirm">
+        <source>Remove this tag?</source>
+        <target>Usunąć ten tag?</target>
+      </trans-unit>
+
+      <!-- Zajawki / miejsca osadzenia (teasers.html.twig, teaser-edit.html.twig). -->
+      <trans-unit id="quince.blog.add_placement">
+        <source>Add placement</source>
+        <target>Dodaj miejsce</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.no_placements_yet">
+        <source>No placements yet. Add one and insert its hook anywhere in the theme.</source>
+        <target>Nie ma jeszcze żadnego miejsca. Dodaj jedno i wstaw jego hook gdziekolwiek w motywie.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.placement_hook_hint">
+        <source>Each placement below gets its own hook, no parameters. Insert it anywhere in the theme, for example as a "Module block" on the homepage.</source>
+        <target>Każde miejsce poniżej dostaje własny hook, bez parametrów. Wstaw go gdziekolwiek w motywie, np. jako „Blok modułu" na stronie głównej.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.key">
+        <source>Key</source>
+        <target>Klucz</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.hook">
+        <source>Hook</source>
+        <target>Hook</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.hook_colon">
+        <source>Hook:</source>
+        <target>Hook:</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.enabled">
+        <source>Enabled</source>
+        <target>Włączone</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.remove_placement_confirm">
+        <source>Remove this placement?</source>
+        <target>Usunąć to miejsce?</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.layout">
+        <source>Layout</source>
+        <target>Układ</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.layout_featured">
+        <source>Featured post + list</source>
+        <target>Wyróżniony wpis + lista</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.layout_grid">
+        <source>Equal row of tiles</source>
+        <target>Równy rząd kafli</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.layout_rail">
+        <source>Compact strip</source>
+        <target>Zwarty pasek</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.featured_layout_hint">
+        <source>The featured layout always shows four posts.</source>
+        <target>Układ wyróżniony zawsze pokazuje cztery wpisy.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.category_filter_optional">
+        <source>Category filter (optional)</source>
+        <target>Filtr kategorii (opcjonalnie)</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.from_the_blog">
+        <source>From the blog</source>
+        <target>Z bloga</target>
+      </trans-unit>
+
+      <!-- Ustawienia bloga (settings.html.twig). -->
+      <trans-unit id="quince.blog.post_page_width">
+        <source>Post page width</source>
+        <target>Szerokość strony wpisu</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.columns_intro">
+        <source>The shop is currently set to %columns% columns (Design → Appearance). Pick how many of those columns the post text and the post cover each take up.</source>
+        <target>Sklep ma teraz ustawione %columns% kolumn (Wygląd → Wygląd sklepu). Wybierz, ile z tych kolumn zajmuje tekst wpisu, a ile zdjęcie.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.text_width_columns">
+        <source>Text width (columns)</source>
+        <target>Szerokość tekstu (kolumny)</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.text_width_hint">
+        <source>Title, body text, FAQ, related posts.</source>
+        <target>Tytuł, treść, FAQ, powiązane wpisy.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.cover_width_columns">
+        <source>Cover image width (columns)</source>
+        <target>Szerokość zdjęcia (kolumny)</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.cover_width_hint">
+        <source>Set it to %columns% for the full page width.</source>
+        <target>Ustaw na %columns%, żeby zająć pełną szerokość strony.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.related_posts">
+        <source>Related posts</source>
+        <target>Powiązane wpisy</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.related_count_label">
+        <source>How many to show under the post</source>
+        <target>Ile pokazać pod wpisem</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.related_count_hint">
+        <source>The teasers always stretch to fill the full text width, no matter the number.</source>
+        <target>Zajawki zawsze rozciągają się na pełną szerokość tekstu, niezależnie od liczby.</target>
+      </trans-unit>
+
+      <!-- Komunikaty kontrolerów (PostsController, CategoriesController, TagsController, TeasersController, SettingsController). -->
+      <trans-unit id="quince.blog.flash_post_not_found">
+        <source>That post does not exist in this shop.</source>
+        <target>Ten wpis nie istnieje w tym sklepie.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_post_saved">
+        <source>Post saved.</source>
+        <target>Wpis zapisany.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_post_removed">
+        <source>Post removed.</source>
+        <target>Wpis usunięty.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_post_not_removed">
+        <source>Could not remove that post.</source>
+        <target>Nie udało się usunąć tego wpisu.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_no_post_selected">
+        <source>No post selected.</source>
+        <target>Nie zaznaczono żadnego wpisu.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_posts_removed">
+        <source>%count% post(s) removed.</source>
+        <target>Usunięto wpisów: %count%.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_posts_updated">
+        <source>%count% post(s) updated.</source>
+        <target>Zaktualizowano wpisów: %count%.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_category_not_found">
+        <source>That category does not exist in this shop.</source>
+        <target>Ta kategoria nie istnieje w tym sklepie.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_category_saved">
+        <source>Category saved.</source>
+        <target>Kategoria zapisana.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_category_removed">
+        <source>Category removed.</source>
+        <target>Kategoria usunięta.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_category_not_removed">
+        <source>Could not remove that category.</source>
+        <target>Nie udało się usunąć tej kategorii.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_tag_saved">
+        <source>Tag saved.</source>
+        <target>Tag zapisany.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_tag_removed">
+        <source>Tag removed.</source>
+        <target>Tag usunięty.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_tag_not_removed">
+        <source>Could not remove that tag.</source>
+        <target>Nie udało się usunąć tego tagu.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_placement_not_found">
+        <source>That placement does not exist.</source>
+        <target>To miejsce nie istnieje.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_placement_saved">
+        <source>Placement saved.</source>
+        <target>Miejsce zapisane.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_placement_removed">
+        <source>Placement removed.</source>
+        <target>Miejsce usunięte.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.flash_settings_saved">
+        <source>Settings saved.</source>
+        <target>Ustawienia zapisane.</target>
+      </trans-unit>
+
+    </body>
+  </file>
+</xliff>

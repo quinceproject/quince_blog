@@ -1,0 +1,60 @@
+{# Lista umieszczeń zajawek bloga. Edycja/dodawanie to osobny ekran
+   (teaser-edit.html.twig) — tak samo jak przy Posts/Categories. #}
+{% extends '@Modules/quince_engine/views/templates/admin/layout.html.twig' %}
+{% import '@Modules/quince_engine/views/templates/admin/_macros/icons.html.twig' as icons %}
+
+{% trans_default_domain 'Modules.Quinceblog.Admin' %}
+
+{% block quince_intro %}
+    <div class="qc-alert qc-alert-info">
+        {{ icons.icon('info', 18, 'qc-alert-icon') }}
+        <div>{{ 'Each placement below gets its own hook, no parameters. Insert it anywhere in the theme, for example as a "Module block" on the homepage.'|trans }}</div>
+    </div>
+{% endblock %}
+
+{% block quince_actions %}
+    <a class="qc-btn qc-btn-primary" href="{{ path('quince_blog_teasers_edit', {'key': '_new'}) }}">
+        {{ icons.icon('plus', 14) }} {{ 'Add placement'|trans }}
+    </a>
+{% endblock %}
+
+{% block quince_body %}
+<div class="qc-table-wrap">
+    <table class="qc-table">
+        <thead>
+            <tr>
+                <th>{{ 'Key'|trans }}</th>
+                <th>{{ 'Hook'|trans }}</th>
+                <th>{{ 'Layout'|trans }}</th>
+                <th>{{ 'Enabled'|trans }}</th>
+                <th style="width:80px"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set layoutLabels = {'hero': 'Featured post + list'|trans, 'row': 'Equal row of tiles'|trans, 'strip': 'Compact strip'|trans} %}
+            {% for p in placements %}
+                <tr>
+                    <td><a href="{{ path('quince_blog_teasers_edit', {'key': p.key}) }}"><strong>{{ p.key }}</strong></a></td>
+                    <td><code>{{ p.hook }}</code></td>
+                    <td>{{ layoutLabels[p.layout]|default(p.layout) }}</td>
+                    <td>{% if p.enabled %}<span class="qc-badge qc-badge-success">{{ 'Yes'|trans }}</span>{% else %}<span class="qc-badge">{{ 'No'|trans }}</span>{% endif %}</td>
+                    <td>
+                        <div class="qc-row-actions" style="opacity:1">
+                            <a class="qc-icon-btn" href="{{ path('quince_blog_teasers_edit', {'key': p.key}) }}">{{ icons.icon('edit', 14) }}</a>
+                            <form method="post" action="{{ path('quince_blog_teasers_delete') }}" style="display:inline">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('quince_blog_teasers_delete') }}">
+                                <input type="hidden" name="key" value="{{ p.key }}">
+                                <button type="submit" class="qc-icon-btn qc-danger" onclick="return confirm('{{ 'Remove this placement?'|trans|e('js') }}')">
+                                    {{ icons.icon('trash', 14) }}
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5"><div class="qc-empty"><div class="qc-empty-text">{{ 'No placements yet. Add one and insert its hook anywhere in the theme.'|trans }}</div></div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

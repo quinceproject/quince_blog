@@ -1,0 +1,533 @@
+{# Edycja wpisu: pola wielojęzyczne, status, kategorie, tagi, zdjęcie
+   wyróżnione, FAQ, polecane produkty. Te same komponenty co reszta panelu. #}
+{% extends '@Modules/quince_engine/views/templates/admin/layout.html.twig' %}
+{% import '@Modules/quince_engine/views/templates/admin/_macros/icons.html.twig' as icons %}
+{% import '@Modules/quince_engine/views/templates/admin/_macros/fields.html.twig' as fields %}
+
+{% trans_default_domain 'Modules.Quinceblog.Admin' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {# Skórka "prestashop" TinyMCE nie rysuje obramowania swojego kontenera —
+       własny wrapper dostaje wygląd reszty pól panelu (.qc-field-base), zamiast
+       polegać na wewnętrznych klasach wtyczki. #}
+    <style>
+        .quince-blog-editor-wrap{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);overflow:hidden}
+        .quince-blog-editor-wrap .mce-tinymce{border:none!important}
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {# Ten sam edytor co w portowanym flavor_blog: natywny TinyMCE PS9 przez
+       tinySetup() z js/admin/tinymce.inc.js — niezależny od tego, czy bieżąca
+       strona załadowała bundel komponentów nowego panelu (CMS ma własny,
+       nasza strona nie). #}
+    <script src="/js/tiny_mce/tinymce.min.js" defer></script>
+    <script src="/js/admin/tinymce.inc.js" defer></script>
+    <script src="{{ asset('../modules/quince_engine/views/js/vendor/alpine-sort.min.js') ~ qcVer }}" defer></script>
+    <script src="{{ asset('../modules/quince_engine/views/js/vendor/alpine.min.js') ~ qcVer }}" defer></script>
+{% endblock %}
+
+{% block quince_actions %}
+    <a class="qc-btn qc-btn-outline" href="{{ path('quince_blog_posts') }}">{{ 'Back to list'|trans }}</a>
+    {% if post %}
+        <a class="qc-btn qc-btn-outline" target="_blank"
+           href="{{ shopUrl }}/{{ routePrefix }}/{{ (post.lang[languages|filter(l => l.default)|first.id_lang].slug)|default('') }}?preview={{ previewToken }}">
+            {{ icons.icon('eye', 14) }} {{ 'Preview'|trans }}
+        </a>
+    {% endif %}
+    <button type="submit" form="quince-post-edit" class="qc-btn qc-btn-primary">
+        {{ icons.icon('check', 14) }} {{ 'Save'|trans }}
+    </button>
+{% endblock %}
+
+{% block quince_body %}
+<form id="quince-post-edit" method="post" action="{{ path('quince_blog_posts_save') }}" enctype="multipart/form-data"
+      class="qc-stack" x-data="quincePostEdit()" @submit="window.tinyMCE && window.tinyMCE.triggerSave()">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('quince_blog_posts_save') }}">
+    <input type="hidden" name="id_post" value="{{ post.id_post|default(0) }}">
+
+    <div class="qc-form-grid" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr); align-items:start">
+        <div class="qc-stack">
+
+            {# ── Treść ── #}
+            <div class="qc-card">
+                <div class="qc-card-head">
+                    <div class="qc-card-title">{{ 'Content'|trans }}</div>
+                    {# Jeden przełącznik języka dla całej karty — Title, Slug, Excerpt
+                       i Content dzielą tę samą zmienną `lang`, więc dostają jeden
+                       wspólny select zamiast osobnego przy każdym polu. #}
+                    <div class="qc-multilang-row" style="width:auto">
+                        <button type="button" class="qc-lang-toggle" @click="langOpen = !langOpen">
+                            <span x-text="languages.find(l => l.id === lang).iso"></span>
+                            <svg class="qc-icon" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+                        </button>
+                        <div class="qc-lang-menu" x-show="langOpen" x-cloak @click.outside="langOpen = false">
+                            <template x-for="l in languages" :key="l.id">
+                                <div class="qc-lang-row" :class="lang === l.id && 'qc-current'" @click="lang = l.id; langOpen = false">
+                                    <span class="qc-lang-dot" :class="String(title[l.id] || '').trim() && 'qc-complete'"></span>
+                                    <span class="qc-lang-row-name" x-text="l.name"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+                <div class="qc-card-body qc-stack">
+                    <div class="qc-field">
+                        <label class="qc-label">{{ 'Title'|trans }}</label>
+                        <input type="text" class="qc-field-base qc-focusable" spellcheck="false"
+                               :name="'lang[' + lang + '][title]'" x-model="title[lang]" @input="slugTouched[lang] || (slug[lang] = slugify(title[lang]))">
+                        <template x-for="l in languages" :key="'ht' + l.id"><template x-if="l.id !== lang">
+                            <input type="hidden" :name="'lang[' + l.id + '][title]'" :value="title[l.id] || ''">
+                        </template></template>
+                    </div>
+
+                    <div class="qc-field">
+                        <label class="qc-label">{{ 'Slug'|trans }}</label>
+                        <input type="text" class="qc-field-base qc-focusable" spellcheck="false"
+                               :name="'lang[' + lang + '][slug]'" x-model="slug[lang]" @input="slugTouched[lang] = true">
+                        <template x-for="l in languages" :key="'hs' + l.id"><template x-if="l.id !== lang">
+                            <input type="hidden" :name="'lang[' + l.id + '][slug]'" :value="slug[l.id] || ''">
+                        </template></template>
+                        <div class="qc-hint">{{ 'Left empty, built from the title.'|trans }}</div>
+                    </div>
+
+                    <div class="qc-field">
+                        <label class="qc-label">{{ 'Excerpt'|trans }}</label>
+                        <textarea class="qc-field-base qc-focusable" rows="2" :name="'lang[' + lang + '][excerpt]'" x-model="excerpt[lang]"></textarea>
+                        <template x-for="l in languages" :key="'he' + l.id"><template x-if="l.id !== lang">
+                            <textarea hidden :name="'lang[' + l.id + '][excerpt]'" x-text="excerpt[l.id] || ''"></textarea>
+                        </template></template>
+                        <div class="qc-hint">{{ 'Shown on teasers and listing pages.'|trans }}</div>
+                    </div>
+
+                    <div class="qc-field">
+                        <label class="qc-label">{{ 'Content'|trans }}</label>
+                        {# Edytor TinyMCE (komponent core'u PS9, ten sam co CMS/opisy produktów)
+                           potrzebuje JEDNEGO STAŁEGO pola na język — nie da się go, jak
+                           pozostałych pól, przełączać przez podmianę `name`/wartości na
+                           jednym elemencie. Renderujemy więc po jednym textarea na język,
+                           cały czas obecne w DOM-ie (x-show, nigdy x-if — inaczej TinyMCE
+                           traci uchwyt), widoczne/ukryte zależnie od wybranego języka. #}
+                        <div class="quince-blog-editor-wrap">
+                            {% for l in languages %}
+                                <textarea id="quince-blog-content-{{ l.id_lang }}" class="quince-blog-editor" rows="16"
+                                          name="lang[{{ l.id_lang }}][content]"
+                                          x-show="lang === {{ l.id_lang }}" x-cloak>{{ (post.lang[l.id_lang].content)|default('') }}</textarea>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# ── FAQ ── #}
+            <div class="qc-card">
+                <div class="qc-card-head">
+                    <div><div class="qc-card-title">{{ 'FAQ'|trans }}</div><div class="qc-card-desc">{{ 'Shown as an accordion under the post.'|trans }}</div></div>
+                    <button type="button" class="qc-btn qc-btn-outline" @click="addFaq()">{{ icons.icon('plus', 14) }} {{ 'Add question'|trans }}</button>
+                </div>
+                <div class="qc-card-body qc-stack">
+                    <div class="qc-field">
+                        <label class="qc-label">{{ 'Section heading'|trans }}</label>
+                        <div class="qc-multilang-row">
+                            {{ fields.iconpicker('faq_icon', post.faq_icon|default(''), faqIconSvg, path(iconsRoute)) }}
+                            <input type="text" class="qc-field-base qc-focusable"
+                                   :name="'lang[' + lang + '][faq_heading]'" x-model="faqHeading[lang]"
+                                   placeholder="{{ 'Frequently Asked Questions'|trans }}">
+                            <button type="button" class="qc-lang-toggle" @click="faqHeadingLangOpen = !faqHeadingLangOpen">
+                                <span class="qc-lang-dot" :class="String(faqHeading[lang] || '').trim() && 'qc-complete'"></span>
+                                <span x-text="languages.find(l => l.id === lang).iso"></span>
+                                <svg class="qc-icon" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+                            </button>
+                            <div class="qc-lang-menu" x-show="faqHeadingLangOpen" x-cloak @click.outside="faqHeadingLangOpen = false">
+                                <template x-for="l in languages" :key="l.id">
+                                    <div class="qc-lang-row" :class="lang === l.id && 'qc-current'" @click="lang = l.id; faqHeadingLangOpen = false">
+                                        <span class="qc-lang-dot" :class="String(faqHeading[l.id] || '').trim() && 'qc-complete'"></span>
+                                        <span class="qc-lang-row-name" x-text="l.name"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                        <template x-for="l in languages" :key="'hqh' + l.id"><template x-if="l.id !== lang">
+                            <input type="hidden" :name="'lang[' + l.id + '][faq_heading]'" :value="faqHeading[l.id] || ''">
+                        </template></template>
+                    </div>
+
+                    <div class="qc-empty" x-show="!faqs.length" x-cloak><div class="qc-empty-text" style="padding:14px">{{ 'No questions yet.'|trans }}</div></div>
+                    <div class="qc-repeater" x-show="faqs.length" x-cloak x-sort="moveFaq($item, $position)">
+                        <template x-for="(faq, fi) in faqs" :key="faq.uid">
+                            <div class="qc-rep-row" x-sort:item="faq.uid">
+                                <div class="qc-rep-row-head">
+                                    <span class="qc-rep-handle" x-sort:handle>{{ icons.icon('drag', 14) }}</span>
+                                    <div class="qc-multilang-row" style="flex:1">
+                                        <input type="text" class="qc-field-base qc-focusable" spellcheck="false"
+                                               :placeholder="'{{ 'Question'|trans|e('js') }}'"
+                                               :name="'faq[' + fi + '][question][' + faq.lang + ']'" x-model="faq.question[faq.lang]">
+                                        <button type="button" class="qc-lang-toggle" @click="faq.langOpen = !faq.langOpen">
+                                            <span class="qc-lang-dot" :class="String(faq.question[faq.lang] || '').trim() && 'qc-complete'"></span>
+                                            <span x-text="languages.find(l => l.id === faq.lang).iso"></span>
+                                        </button>
+                                        <div class="qc-lang-menu" x-show="faq.langOpen" x-cloak @click.outside="faq.langOpen = false">
+                                            <template x-for="l in languages" :key="l.id">
+                                                <div class="qc-lang-row" :class="faq.lang === l.id && 'qc-current'" @click="faq.lang = l.id; faq.langOpen = false">
+                                                    <span class="qc-lang-row-name" x-text="l.name"></span>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="qc-icon-btn qc-danger" @click="faqs.splice(fi, 1)">{{ icons.icon('trash', 14) }}</button>
+                                </div>
+                                <div class="qc-rep-body">
+                                    <textarea class="qc-field-base qc-focusable" rows="2" :placeholder="'{{ 'Answer'|trans|e('js') }}'"
+                                              :name="'faq[' + fi + '][answer][' + faq.lang + ']'" x-model="faq.answer[faq.lang]"></textarea>
+                                </div>
+                                <template x-for="l in languages" :key="'hf' + l.id"><template x-if="l.id !== faq.lang">
+                                    <span>
+                                        <input type="hidden" :name="'faq[' + fi + '][question][' + l.id + ']'" :value="faq.question[l.id] || ''">
+                                        <input type="hidden" :name="'faq[' + fi + '][answer][' + l.id + ']'" :value="faq.answer[l.id] || ''">
+                                    </span>
+                                </template></template>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            {# ── SEO ── #}
+            <div class="qc-card">
+                <div class="qc-card-head">
+                    <div class="qc-card-title">{{ 'SEO'|trans }}</div>
+                    {# Ten sam mechanizm co w karcie Content: jeden przełącznik na całą
+                       kartę, dzieli zmienną `lang` z resztą formularza. #}
+                    <div class="qc-multilang-row" style="width:auto">
+                        <button type="button" class="qc-lang-toggle" @click="seoLangOpen = !seoLangOpen">
+                            <span x-text="languages.find(l => l.id === lang).iso"></span>
+                            <svg class="qc-icon" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+                        </button>
+                        <div class="qc-lang-menu" x-show="seoLangOpen" x-cloak @click.outside="seoLangOpen = false">
+                            <template x-for="l in languages" :key="l.id">
+                                <div class="qc-lang-row" :class="lang === l.id && 'qc-current'" @click="lang = l.id; seoLangOpen = false">
+                                    <span class="qc-lang-dot" :class="String(metaTitle[l.id] || '').trim() && 'qc-complete'"></span>
+                                    <span class="qc-lang-row-name" x-text="l.name"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+                <div class="qc-card-body qc-form-grid qc-form-grid-2">
+                    <div class="qc-field">
+                        <label class="qc-label">{{ 'Meta title'|trans }}</label>
+                        <input type="text" class="qc-field-base qc-focusable" :name="'lang[' + lang + '][meta_title]'" x-model="metaTitle[lang]">
+                        <template x-for="l in languages" :key="'hmt' + l.id"><template x-if="l.id !== lang">
+                            <input type="hidden" :name="'lang[' + l.id + '][meta_title]'" :value="metaTitle[l.id] || ''">
+                        </template></template>
+                    </div>
+                    <div class="qc-field">
+                        <label class="qc-label">{{ 'Robots'|trans }}</label>
+                        <div class="qc-select-wrap">
+                            <select class="qc-field-base qc-select qc-focusable" :name="'lang[' + lang + '][robots]'" x-model="robots[lang]">
+                                <option value="index">index</option>
+                                <option value="noindex">noindex</option>
+                            </select>
+                            {{ icons.icon('chevronDown', 14, 'qc-select-chevron') }}
+                        </div>
+                        <template x-for="l in languages" :key="'hr' + l.id"><template x-if="l.id !== lang">
+                            <input type="hidden" :name="'lang[' + l.id + '][robots]'" :value="robots[l.id] || 'index'">
+                        </template></template>
+                    </div>
+                    <div class="qc-field" style="grid-column:1 / -1">
+                        <label class="qc-label">{{ 'Meta description'|trans }}</label>
+                        <textarea class="qc-field-base qc-focusable" rows="2" :name="'lang[' + lang + '][meta_description]'" x-model="metaDescription[lang]"></textarea>
+                        <template x-for="l in languages" :key="'hmd' + l.id"><template x-if="l.id !== lang">
+                            <textarea hidden :name="'lang[' + l.id + '][meta_description]'" x-text="metaDescription[l.id] || ''"></textarea>
+                        </template></template>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="qc-stack">
+
+            {# ── Publikacja ── #}
+            <div class="qc-card">
+                <div class="qc-card-head"><div class="qc-card-title">{{ 'Publishing'|trans }}</div></div>
+                <div class="qc-card-body qc-stack">
+                    <div class="qc-field">
+                        <label class="qc-label">{{ 'Status'|trans }}</label>
+                        <div class="qc-select-wrap">
+                            <select name="status" class="qc-field-base qc-select qc-focusable">
+                                <option value="draft" {{ (post.status|default('draft')) == 'draft' ? 'selected' }}>{{ 'Draft'|trans }}</option>
+                                <option value="published" {{ post.status == 'published' ? 'selected' }}>{{ 'Published'|trans }}</option>
+                                <option value="scheduled" {{ post.status == 'scheduled' ? 'selected' }}>{{ 'Scheduled'|trans }}</option>
+                            </select>
+                            {{ icons.icon('chevronDown', 14, 'qc-select-chevron') }}
+                        </div>
+                    </div>
+                    <div class="qc-field">
+                        <label class="qc-label">{{ 'Publish date'|trans }}</label>
+                        <input type="datetime-local" class="qc-field-base qc-focusable" name="date_pub"
+                               value="{{ post.date_pub ? post.date_pub|date('Y-m-d\\TH:i') : '' }}">
+                    </div>
+                </div>
+            </div>
+
+            {# ── Zdjęcie wyróżnione ── #}
+            <div class="qc-card">
+                <div class="qc-card-head"><div class="qc-card-title">{{ 'Featured image'|trans }}</div></div>
+                <div class="qc-card-body qc-stack">
+                    <template x-if="podglad">
+                        <div class="qc-upload-preview"><img :src="podglad" alt=""></div>
+                    </template>
+                    {% if featuredImageUrl %}
+                        <template x-if="!podglad">
+                            <div class="qc-upload-preview"><img src="{{ featuredImageUrl }}" alt=""></div>
+                        </template>
+                    {% endif %}
+
+                    <div class="qc-upload">
+                        <span class="qc-upload-thumb">
+                            <template x-if="podglad"><img :src="podglad" alt=""></template>
+                            <template x-if="!podglad">{% if featuredImageUrl %}<img src="{{ featuredImageUrl }}" alt="">{% else %}<span>{{ icons.icon('image', 18) }}</span>{% endif %}</template>
+                        </span>
+                        <div class="qc-upload-info">
+                            <div class="qc-upload-name" x-text="nazwaPliku || '{{ 'No image yet'|trans }}'"></div>
+                            <div>{{ 'JPG, PNG, WEBP or AVIF, up to 5 MB.'|trans }}</div>
+                        </div>
+                        <div class="qc-upload-actions">
+                            <button type="button" class="qc-btn qc-btn-outline" @click="$refs.plik.click()">
+                                {{ icons.icon('upload', 14) }} {{ 'Choose an image'|trans }}
+                            </button>
+                        </div>
+                        <input type="file" x-ref="plik" hidden name="featured_image"
+                               accept="image/jpeg,image/png,image/webp,image/avif" @change="wybierzPlik($event)">
+                    </div>
+
+                    <div class="qc-field">
+                        <label class="qc-label">{{ 'Caption'|trans }}</label>
+                        <div class="qc-multilang-row">
+                            <input type="text" class="qc-field-base qc-focusable"
+                                   :name="'lang[' + lang + '][featured_image_caption]'" x-model="featuredCaption[lang]"
+                                   placeholder="{{ 'Shown under the photo'|trans }}">
+                            <button type="button" class="qc-lang-toggle" @click="featuredCaptionLangOpen = !featuredCaptionLangOpen">
+                                <span class="qc-lang-dot" :class="String(featuredCaption[lang] || '').trim() && 'qc-complete'"></span>
+                                <span x-text="languages.find(l => l.id === lang).iso"></span>
+                                <svg class="qc-icon" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+                            </button>
+                            <div class="qc-lang-menu" x-show="featuredCaptionLangOpen" x-cloak @click.outside="featuredCaptionLangOpen = false">
+                                <template x-for="l in languages" :key="l.id">
+                                    <div class="qc-lang-row" :class="lang === l.id && 'qc-current'" @click="lang = l.id; featuredCaptionLangOpen = false">
+                                        <span class="qc-lang-dot" :class="String(featuredCaption[l.id] || '').trim() && 'qc-complete'"></span>
+                                        <span class="qc-lang-row-name" x-text="l.name"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                        <template x-for="l in languages" :key="'hfc' + l.id"><template x-if="l.id !== lang">
+                            <input type="hidden" :name="'lang[' + l.id + '][featured_image_caption]'" :value="featuredCaption[l.id] || ''">
+                        </template></template>
+                    </div>
+                </div>
+            </div>
+
+            {# ── Kategorie ── #}
+            <div class="qc-card">
+                <div class="qc-card-head"><div class="qc-card-title">{{ 'Categories'|trans }}</div></div>
+                <div class="qc-card-body">
+                    <div class="qc-empty" x-show="!categories.length" x-cloak><div class="qc-empty-text" style="padding:10px 0">{{ 'No category exists yet.'|trans }}</div></div>
+                    {% for cat in categories %}
+                        <label style="display:flex; align-items:center; gap:8px; padding:6px 0">
+                            <input type="checkbox" class="qc-checkbox" name="category_ids[]" value="{{ cat.id_category }}"
+                                   {{ post and cat.id_category in post.category_ids ? 'checked' }}>
+                            <span>{{ cat.name }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {# ── Tagi ── #}
+            <div class="qc-card">
+                <div class="qc-card-head"><div class="qc-card-title">{{ 'Tags'|trans }}</div></div>
+                <div class="qc-card-body">
+                    <div class="qc-multipick" @click.outside="tagMenuOpen = false">
+                        <button type="button" class="qc-field-base qc-focusable qc-multipick-btn" @click="tagMenuOpen = !tagMenuOpen">
+                            <span class="qc-multipick-label" :class="!tagIds.length && 'qc-empty-label'" x-text="tagIds.length ? tagIds.length + ' {{ 'selected'|trans|e('js') }}' : '{{ 'None'|trans|e('js') }}'"></span>
+                            {{ icons.icon('chevronDown', 14) }}
+                        </button>
+                        <div class="qc-multipick-menu" x-show="tagMenuOpen" x-cloak>
+                            {% for tag in tags %}
+                                <label class="qc-multipick-row">
+                                    <input type="checkbox" value="{{ tag.id_tag }}" name="tag_ids[]" x-model="tagIds">
+                                    <span>{{ tag.name }}</span>
+                                </label>
+                            {% else %}
+                                <div class="qc-empty-text" style="padding:10px">{{ 'No tag exists yet.'|trans }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# ── Polecane produkty ── #}
+            <div class="qc-card">
+                <div class="qc-card-head">
+                    <div><div class="qc-card-title">{{ 'Featured products'|trans }}</div><div class="qc-card-desc">{{ 'Product IDs, picked from the catalogue.'|trans }}</div></div>
+                </div>
+                <div class="qc-card-body qc-stack">
+                    <div class="qc-pill-list">
+                        <template x-for="(p, pi) in productChips" :key="p.id">
+                            <span class="qc-pill">
+                                <span x-text="p.name"></span>
+                                <button type="button" class="qc-pill-remove" @click="productChips.splice(pi, 1)">{{ icons.icon('x', 12) }}</button>
+                            </span>
+                        </template>
+                        <input type="text" class="qc-pill-add" style="border:none; width:90px"
+                               placeholder="{{ 'Product ID'|trans }} + ⏎" x-model="produktNowy"
+                               @keydown.enter.prevent="addProductChip()">
+                    </div>
+                    <input type="hidden" name="product_ids" :value="productChips.map(p => p.id).join(',')">
+                    <div class="qc-hint">{{ 'Look up the product ID on the products list, then type it here.'|trans }}</div>
+
+                    <div class="qc-field">
+                        <label class="qc-label">{{ 'Section heading'|trans }}</label>
+                        <div class="qc-multilang-row">
+                            {{ fields.iconpicker('featured_products_icon', post.featured_products_icon|default(''), featuredIconSvg, path(iconsRoute)) }}
+                            <input type="text" class="qc-field-base qc-focusable"
+                                   :name="'lang[' + lang + '][featured_products_heading]'" x-model="featuredHeading[lang]"
+                                   placeholder="{{ 'Featured products'|trans }}">
+                            <button type="button" class="qc-lang-toggle" @click="featuredHeadingLangOpen = !featuredHeadingLangOpen">
+                                <span class="qc-lang-dot" :class="String(featuredHeading[lang] || '').trim() && 'qc-complete'"></span>
+                                <span x-text="languages.find(l => l.id === lang).iso"></span>
+                                <svg class="qc-icon" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+                            </button>
+                            <div class="qc-lang-menu" x-show="featuredHeadingLangOpen" x-cloak @click.outside="featuredHeadingLangOpen = false">
+                                <template x-for="l in languages" :key="l.id">
+                                    <div class="qc-lang-row" :class="lang === l.id && 'qc-current'" @click="lang = l.id; featuredHeadingLangOpen = false">
+                                        <span class="qc-lang-dot" :class="String(featuredHeading[l.id] || '').trim() && 'qc-complete'"></span>
+                                        <span class="qc-lang-row-name" x-text="l.name"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                        <template x-for="l in languages" :key="'hfh' + l.id"><template x-if="l.id !== lang">
+                            <input type="hidden" :name="'lang[' + l.id + '][featured_products_heading]'" :value="featuredHeading[l.id] || ''">
+                        </template></template>
+                    </div>
+
+                    <div class="qc-field">
+                        <label class="qc-label">{{ 'Maximum shown'|trans }}</label>
+                        <input type="number" min="0" max="20" class="qc-field-base qc-focusable" name="featured_products_max" x-model="featuredMax">
+                        <div class="qc-hint">{{ '0 shows every product picked above, with no limit.'|trans }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+function quincePostEdit() {
+    const LANGUAGES = {{ languages|map(l => {id: l.id_lang, name: l.name, iso: l.iso_code|upper, default: l.default})|json_encode|raw }};
+    const DEFAULT_LANG = (LANGUAGES.find(l => l.default) || LANGUAGES[0]).id;
+    const POST_LANG = {{ (post.lang|default({}))|json_encode|raw }};
+    const PRODUCTS = {{ products|json_encode|raw }};
+    const FEATURED_IMAGE_CAPTION = {{ (featuredImageCaption|default({}))|json_encode|raw }};
+
+    const pick = (field) => {
+        const out = {};
+        LANGUAGES.forEach(l => { out[l.id] = (POST_LANG[l.id] && POST_LANG[l.id][field]) || ''; });
+        return out;
+    };
+
+    return {
+        languages: LANGUAGES,
+        lang: DEFAULT_LANG,
+        langOpen: false,
+        seoLangOpen: false,
+        slugTouched: {},
+
+        init() {
+            this.initEditor();
+        },
+
+        title: pick('title'),
+        slug: pick('slug'),
+        excerpt: pick('excerpt'),
+        metaTitle: pick('meta_title'),
+        metaDescription: pick('meta_description'),
+        robots: Object.assign(pick('robots'), Object.fromEntries(LANGUAGES.map(l => [l.id, (POST_LANG[l.id] && POST_LANG[l.id].robots) || 'index']))),
+        featuredHeading: pick('featured_products_heading'),
+        featuredHeadingLangOpen: false,
+        featuredMax: {{ post.featured_products_max|default(0) }},
+        faqHeading: pick('faq_heading'),
+        faqHeadingLangOpen: false,
+        featuredCaption: Object.fromEntries(LANGUAGES.map(l => [l.id, FEATURED_IMAGE_CAPTION[l.id] || ''])),
+        featuredCaptionLangOpen: false,
+
+        slugify(text) {
+            return String(text || '').toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        },
+
+        // Edytor Content: tinySetup() z js/admin/tinymce.inc.js (ten sam mechanizm
+        // co w portowanym flavor_blog), na textarea renderowanych po jednym na
+        // język (patrz komentarz przy polu w markupie). Po przełączeniu języka
+        // trzeba wymusić przerysowanie — ten sam zabieg, którego używa własny
+        // mechanizm zakładek językowych CMS-a w panelu PS.
+        initEditor() {
+            // $nextTick — Alpine musi najpierw usunąć x-cloak i ustawić x-show
+            // na textarea bieżącego języka; TinyMCE nie podłącza się do elementu,
+            // który w chwili inicjalizacji jest display:none.
+            this.$nextTick(() => {
+                if (typeof tinySetup === 'function') {
+                    tinySetup({ editor_selector: 'quince-blog-editor' });
+                }
+            });
+            this.$watch('lang', (newLang) => {
+                this.$nextTick(() => {
+                    if (typeof tinyMCE === 'undefined') return;
+                    const ed = tinyMCE.get('quince-blog-content-' + newLang);
+                    if (ed) ed.setContent(ed.getContent());
+                });
+            });
+        },
+
+        faqs: ({{ (post.faqs|default([]))|json_encode|raw }}).map(f => ({
+            uid: 'f' + Math.random().toString(36).slice(2),
+            lang: DEFAULT_LANG, langOpen: false,
+            question: Object.fromEntries(LANGUAGES.map(l => [l.id, (f.lang[l.id] && f.lang[l.id].question) || ''])),
+            answer: Object.fromEntries(LANGUAGES.map(l => [l.id, (f.lang[l.id] && f.lang[l.id].answer) || ''])),
+        })),
+        addFaq() {
+            this.faqs.push({ uid: 'f' + Math.random().toString(36).slice(2), lang: DEFAULT_LANG, langOpen: false, question: {}, answer: {} });
+        },
+        moveFaq(uid, position) {
+            const from = this.faqs.findIndex(f => f.uid === uid);
+            this.faqs.splice(position, 0, this.faqs.splice(from, 1)[0]);
+        },
+
+        tagIds: {{ (post.tag_ids|default([]))|json_encode|raw }}.map(String),
+        tagMenuOpen: false,
+
+        productChips: PRODUCTS.map(p => ({ id: p.id_product, name: p.name + ' (#' + p.id_product + ')' })),
+        produktNowy: '',
+        addProductChip() {
+            const id = parseInt(this.produktNowy, 10);
+            if (id > 0 && !this.productChips.some(p => p.id === id)) {
+                this.productChips.push({ id, name: '#' + id });
+            }
+            this.produktNowy = '';
+        },
+
+        podglad: null,
+        nazwaPliku: '',
+        wybierzPlik(e) {
+            const plik = e.target.files[0];
+            if (!plik) return;
+            this.nazwaPliku = plik.name;
+            this.podglad = URL.createObjectURL(plik);
+        }
+    };
+}
+</script>
+{% endblock %}

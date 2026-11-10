@@ -1,0 +1,183 @@
+{# Lista wpisów blogowych: filtr, sortowanie, zbiorcze akcje, paginacja.
+   Ten sam layout i te same komponenty co reszta panelu Quince. #}
+{% extends '@Modules/quince_engine/views/templates/admin/layout.html.twig' %}
+{% import '@Modules/quince_engine/views/templates/admin/_macros/icons.html.twig' as icons %}
+
+{% trans_default_domain 'Modules.Quinceblog.Admin' %}
+
+{% macro naglowek(klucz, tekst, sort, dir, filters) %}
+    {% import '@Modules/quince_engine/views/templates/admin/_macros/icons.html.twig' as icons %}
+    {% set nowyKierunek = (sort == klucz and dir == 'DESC') ? 'ASC' : 'DESC' %}
+    <th class="qc-sortable">
+        <a href="{{ path('quince_blog_posts', filters|merge({'sort': klucz, 'dir': nowyKierunek})) }}">
+            {{ tekst }}
+            {% if sort == klucz %}
+                <span class="qc-sort"{{ dir == 'ASC' ? ' style="transform:rotate(180deg)"'|raw }}>{{ icons.icon('chevronDown', 12) }}</span>
+            {% endif %}
+        </a>
+    </th>
+{% endmacro %}
+
+{% import _self as kolumna %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('../modules/quince_engine/views/js/vendor/alpine.min.js') ~ qcVer }}" defer></script>
+{% endblock %}
+
+{% block quince_actions %}
+    <a class="qc-btn qc-btn-primary" href="{{ path('quince_blog_posts_edit', {'id': 0}) }}">
+        {{ icons.icon('plus', 14) }} {{ 'New post'|trans }}
+    </a>
+{% endblock %}
+
+{% block quince_body %}
+<div class="qc-stack" x-data="{ zaznaczone: [], get ile() { return this.zaznaczone.length }, calaStrona: false,
+    przelaczStrone(v) { this.calaStrona = v; this.zaznaczone = v ? {{ rows|map(r => r.id_post)|json_encode|raw }} : []; } }">
+
+    {# ── Filtr ── #}
+    <div class="qc-card">
+        <div class="qc-card-body">
+            <form method="get" action="{{ path('quince_blog_posts') }}" style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end">
+                <div class="qc-field" style="max-inline-size:280px; margin:0">
+                    <label class="qc-label" for="q-search">{{ 'Title'|trans }}</label>
+                    <input type="search" class="qc-field-base qc-focusable" id="q-search" name="search"
+                           value="{{ filters.search }}" placeholder="{{ 'Search by title...'|trans }}">
+                </div>
+                <div class="qc-field" style="max-inline-size:180px; margin:0">
+                    <label class="qc-label" for="q-status">{{ 'Status'|trans }}</label>
+                    <div class="qc-select-wrap">
+                        <select id="q-status" name="status" class="qc-field-base qc-select qc-focusable">
+                            <option value="">{{ 'All statuses'|trans }}</option>
+                            <option value="published" {{ filters.status == 'published' ? 'selected' }}>{{ 'Published'|trans }}</option>
+                            <option value="draft" {{ filters.status == 'draft' ? 'selected' }}>{{ 'Draft'|trans }}</option>
+                            <option value="scheduled" {{ filters.status == 'scheduled' ? 'selected' }}>{{ 'Scheduled'|trans }}</option>
+                        </select>
+                        {{ icons.icon('chevronDown', 14, 'qc-select-chevron') }}
+                    </div>
+                </div>
+                <div class="qc-field" style="max-inline-size:220px; margin:0">
+                    <label class="qc-label" for="q-cat">{{ 'Category'|trans }}</label>
+                    <div class="qc-select-wrap">
+                        <select id="q-cat" name="id_category" class="qc-field-base qc-select qc-focusable">
+                            <option value="0">{{ 'All categories'|trans }}</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id_category }}" {{ filters.id_category == cat.id_category ? 'selected' }}>{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                        {{ icons.icon('chevronDown', 14, 'qc-select-chevron') }}
+                    </div>
+                </div>
+                <button type="submit" class="qc-btn qc-btn-outline">{{ icons.icon('search', 14) }} {{ 'Filter'|trans }}</button>
+                {% if filters.search or filters.status or filters.id_category %}
+                    <a class="qc-btn qc-btn-text" href="{{ path('quince_blog_posts') }}">{{ 'Clear'|trans }}</a>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    {# ── Wiersze ── #}
+    <form method="post" action="{{ path('quince_blog_posts_bulk') }}">
+        {# Jeden formularz obsługuje dwie trasy (bulk i usuwanie wiersza
+           przez `formaction`), więc dwa osobno nazwane tokeny — jedno pole
+           `_csrf_token` mogłoby nieść tylko jedną z nich. #}
+        <input type="hidden" name="_csrf_token_bulk" value="{{ csrf_token('quince_blog_posts_bulk') }}">
+        <input type="hidden" name="_csrf_token_delete" value="{{ csrf_token('quince_blog_posts_delete') }}">
+        <div class="qc-table-wrap">
+
+            <div class="qc-bulk-bar" x-show="ile > 0" x-cloak>
+                <span><span x-text="ile"></span> {{ 'selected'|trans }}</span>
+                <button type="submit" name="bulk_action" value="published" class="qc-btn qc-btn-text qc-btn-sm">{{ 'Publish'|trans }}</button>
+                <button type="submit" name="bulk_action" value="draft" class="qc-btn qc-btn-text qc-btn-sm">{{ 'Set as draft'|trans }}</button>
+                <button type="submit" name="bulk_action" value="delete" class="qc-btn qc-btn-outline qc-btn-sm">
+                    {{ icons.icon('trash', 14) }} {{ 'Delete selected'|trans }}
+                </button>
+            </div>
+
+            <table class="qc-table">
+                <thead>
+                    <tr>
+                        <th style="width:34px">
+                            <input type="checkbox" class="qc-checkbox" aria-label="{{ 'Select all rows on this page'|trans }}"
+                                   :checked="calaStrona" @change="przelaczStrone($event.target.checked)">
+                        </th>
+                        {{ kolumna.naglowek('title', 'Title'|trans, sort, dir, filters) }}
+                        {{ kolumna.naglowek('status', 'Status'|trans, sort, dir, filters) }}
+                        {{ kolumna.naglowek('date_pub', 'Published'|trans, sort, dir, filters) }}
+                        {{ kolumna.naglowek('view_count', 'Views'|trans, sort, dir, filters) }}
+                        <th style="width:80px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="qc-checkbox" name="ids[]" value="{{ row.id_post }}" x-model="zaznaczone">
+                            </td>
+                            <td>
+                                <a href="{{ path('quince_blog_posts_edit', {'id': row.id_post}) }}"><strong>{{ row.title ?: '('|trans ~ 'untitled'|trans ~ ')'|trans }}</strong></a>
+                            </td>
+                            <td>
+                                {% if row.status == 'published' %}
+                                    <span class="qc-badge qc-badge-success">{{ 'Published'|trans }}</span>
+                                {% elseif row.status == 'scheduled' %}
+                                    <span class="qc-badge qc-badge-warning">{{ 'Scheduled'|trans }}</span>
+                                {% else %}
+                                    <span class="qc-badge">{{ 'Draft'|trans }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ row.date_pub ? row.date_pub|date('Y-m-d') : '—' }}</td>
+                            <td>{{ row.view_count }}</td>
+                            <td>
+                                <div class="qc-row-actions" style="opacity:1">
+                                    <a class="qc-icon-btn" href="{{ path('quince_blog_posts_edit', {'id': row.id_post}) }}">{{ icons.icon('edit', 14) }}</a>
+                                    <button type="submit" formaction="{{ path('quince_blog_posts_delete') }}" formmethod="post"
+                                            name="id" value="{{ row.id_post }}" class="qc-icon-btn qc-danger"
+                                            onclick="return confirm('{{ 'Remove this post?'|trans|e('js') }}')">
+                                        {{ icons.icon('trash', 14) }}
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6">
+                                <div class="qc-empty">
+                                    <span class="qc-empty-icon">{{ icons.icon('file', 36) }}</span>
+                                    <div class="qc-empty-text">
+                                        {% if filters.search or filters.status or filters.id_category %}
+                                            {{ 'No post matches the filter.'|trans }}
+                                        {% else %}
+                                            {{ 'No post yet. The first one appears here once you write it.'|trans }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% if pages > 1 %}
+                <div class="qc-table-foot">
+                    <span>{{ 'Page %page% of %pages%, %total% posts'|trans({'%page%': page, '%pages%': pages, '%total%': total}) }}</span>
+                    <div class="qc-pagination">
+                        {% if page > 1 %}
+                            <a class="qc-page-btn" href="{{ path('quince_blog_posts', filters|merge({'page': page - 1, 'sort': sort, 'dir': dir})) }}">‹</a>
+                        {% endif %}
+                        {% for numer in max(1, page - 2)..min(pages, page + 2) %}
+                            <a class="qc-page-btn{{ numer == page ? ' qc-active' : '' }}"
+                               href="{{ path('quince_blog_posts', filters|merge({'page': numer, 'sort': sort, 'dir': dir})) }}">{{ numer }}</a>
+                        {% endfor %}
+                        {% if page < pages %}
+                            <a class="qc-page-btn" href="{{ path('quince_blog_posts', filters|merge({'page': page + 1, 'sort': sort, 'dir': dir})) }}">›</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="qc-table-foot"><span>{{ '%total% posts'|trans({'%total%': total}) }}</span></div>
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}

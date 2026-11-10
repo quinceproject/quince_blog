@@ -1,0 +1,23 @@
+{
+    "name": "quinceproject/blog",
+    "description": "Quince Blog: multilingual, multistore blog with posts, categories, tags and teasers",
+    "type": "prestashop-module",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Quince Project",
+            "email": "quinceproject@proton.me"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Quince\\Blog\\": "src/"
+        }
+    },
+    "config": {
+        "prepend-autoloader": false
+    }
+}

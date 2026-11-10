@@ -1,0 +1,132 @@
+{# Edycja/dodawanie jednego umieszczenia zajawek. #}
+{% extends '@Modules/quince_engine/views/templates/admin/layout.html.twig' %}
+{% import '@Modules/quince_engine/views/templates/admin/_macros/icons.html.twig' as icons %}
+
+{% trans_default_domain 'Modules.Quinceblog.Admin' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('../modules/quince_engine/views/js/vendor/alpine.min.js') ~ qcVer }}" defer></script>
+{% endblock %}
+
+{% block quince_actions %}
+    <a class="qc-btn qc-btn-outline" href="{{ path('quince_blog_teasers') }}">{{ 'Back to list'|trans }}</a>
+    <button type="submit" form="quince-teaser-edit" class="qc-btn qc-btn-primary">
+        {{ icons.icon('check', 14) }} {{ 'Save'|trans }}
+    </button>
+{% endblock %}
+
+{% block quince_body %}
+<form id="quince-teaser-edit" method="post" action="{{ path('quince_blog_teasers_save') }}" class="qc-stack" x-data="quinceTeaserEdit()">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('quince_blog_teasers_save') }}">
+    <input type="hidden" name="original_key" value="{{ originalKey }}">
+
+    <div class="qc-card">
+        <div class="qc-card-body qc-stack">
+            <div class="qc-form-grid qc-form-grid-2">
+                <div class="qc-field">
+                    <label class="qc-label">{{ 'Key'|trans }}</label>
+                    <input type="text" class="qc-field-base qc-focusable" spellcheck="false"
+                           name="key" x-model="key" placeholder="default">
+                    <div class="qc-hint">
+                        {{ 'Hook:'|trans }}
+                        <code x-text="hookName()"></code>
+                    </div>
+                </div>
+                <div class="qc-field" style="align-self:end">
+                    <label class="qc-toggle">
+                        <input type="checkbox" x-model="enabled">
+                        <span class="qc-toggle-track"></span>
+                        <span class="qc-toggle-text">{{ 'Enabled'|trans }}</span>
+                    </label>
+                    <input type="hidden" name="enabled" :value="enabled ? 1 : 0">
+                </div>
+            </div>
+
+            <div class="qc-form-grid qc-form-grid-2">
+                <div class="qc-field">
+                    <label class="qc-label">{{ 'Layout'|trans }}</label>
+                    <div class="qc-select-wrap">
+                        <select class="qc-field-base qc-select qc-focusable" name="layout" x-model="layout">
+                            <option value="hero">{{ 'Featured post + list'|trans }}</option>
+                            <option value="row">{{ 'Equal row of tiles'|trans }}</option>
+                            <option value="strip">{{ 'Compact strip'|trans }}</option>
+                        </select>
+                        {{ icons.icon('chevronDown', 14, 'qc-select-chevron') }}
+                    </div>
+                </div>
+                <div class="qc-field" x-show="layout !== 'hero'" x-cloak>
+                    <label class="qc-label">{{ 'Columns'|trans }}</label>
+                    <input type="number" min="1" max="12" class="qc-field-base qc-focusable" name="count" x-model="count">
+                    <div class="qc-hint">{{ 'The featured layout always shows four posts.'|trans }}</div>
+                </div>
+            </div>
+
+            <div class="qc-field">
+                <label class="qc-label">{{ 'Category filter (optional)'|trans }}</label>
+                <div class="qc-select-wrap">
+                    <select class="qc-field-base qc-select qc-focusable" name="id_category" x-model="id_category">
+                        <option value="0">{{ 'All categories'|trans }}</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id_category }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                    {{ icons.icon('chevronDown', 14, 'qc-select-chevron') }}
+                </div>
+            </div>
+
+            <div class="qc-field">
+                <label class="qc-label">{{ 'Heading'|trans }}</label>
+                <div class="qc-multilang-row">
+                    <input type="text" class="qc-field-base qc-focusable"
+                           :name="'title[' + lang + ']'" x-model="title[lang]"
+                           placeholder="{{ 'From the blog'|trans }}">
+                    <button type="button" class="qc-lang-toggle" @click="langOpen = !langOpen">
+                        <span class="qc-lang-dot" :class="String(title[lang] || '').trim() && 'qc-complete'"></span>
+                        <span x-text="languages.find(l => l.id === lang).iso"></span>
+                        <svg class="qc-icon" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+                    </button>
+                    <div class="qc-lang-menu" x-show="langOpen" x-cloak @click.outside="langOpen = false">
+                        <template x-for="l in languages" :key="l.id">
+                            <div class="qc-lang-row" :class="lang === l.id && 'qc-current'" @click="lang = l.id; langOpen = false">
+                                <span class="qc-lang-dot" :class="String(title[l.id] || '').trim() && 'qc-complete'"></span>
+                                <span class="qc-lang-row-name" x-text="l.name"></span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <template x-for="l in languages" :key="'ht' + l.id"><template x-if="l.id !== lang">
+                    <input type="hidden" :name="'title[' + l.id + ']'" :value="title[l.id] || ''">
+                </template></template>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+function quinceTeaserEdit() {
+    const LANGUAGES = {{ languages|map(l => {id: l.id_lang, name: l.name, iso: l.iso_code|upper, default: l.default})|json_encode|raw }};
+    const DEFAULT_LANG = (LANGUAGES.find(l => l.default) || LANGUAGES[0]).id;
+    const HOOK_PREFIX = {{ hookPrefix|json_encode|raw }};
+    const PLACEMENT = {{ (placement ?? {'key': '', 'enabled': true, 'layout': 'row', 'count': 4, 'id_category': 0, 'title': {}})|json_encode|raw }};
+
+    return {
+        languages: LANGUAGES,
+        lang: DEFAULT_LANG,
+        langOpen: false,
+
+        key: PLACEMENT.key || '',
+        enabled: PLACEMENT.key ? !!PLACEMENT.enabled : true,
+        layout: PLACEMENT.layout || 'row',
+        count: PLACEMENT.count || 4,
+        id_category: PLACEMENT.id_category || 0,
+        title: Object.assign({}, PLACEMENT.title || {}),
+
+        hookName() {
+            const k = String(this.key || '').trim();
+            return HOOK_PREFIX + (k ? k.charAt(0).toUpperCase() + k.slice(1) : '…');
+        },
+    };
+}
+</script>
+{% endblock %}

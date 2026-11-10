@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-US" target-language="pl-PL" datatype="plaintext" original="ModulesQuinceblogShop">
+    <body>
+
+      <!-- Okruszki: nazwa strony głównej i bloga, powtarzane w kilku kontrolerach. -->
+      <trans-unit id="quince.blog.home">
+        <source>Home</source>
+        <target>Strona główna</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.blog">
+        <source>Blog</source>
+        <target>Blog</target>
+      </trans-unit>
+
+      <!-- Lista wpisów (list.tpl). -->
+      <trans-unit id="quince.blog.categories_nav">
+        <source>Blog categories</source>
+        <target>Kategorie bloga</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.all">
+        <source>All</source>
+        <target>Wszystkie</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.no_posts">
+        <source>No posts yet.</source>
+        <target>Na razie nie ma żadnych wpisów.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.no_posts_category">
+        <source>No posts in this category yet.</source>
+        <target>W tej kategorii nie ma na razie żadnych wpisów.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.no_posts_tag">
+        <source>No posts with this tag yet.</source>
+        <target>Z tym tagiem nie ma na razie żadnych wpisów.</target>
+      </trans-unit>
+
+      <!-- Pojedynczy wpis (post.tpl). -->
+      <trans-unit id="quince.blog.views">
+        <source>views</source>
+        <target>wyświetleń</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.featured_products">
+        <source>Featured products</source>
+        <target>Polecane produkty</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.faq_default">
+        <source>Frequently Asked Questions</source>
+        <target>Najczęściej zadawane pytania</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.more_posts_nav">
+        <source>More posts</source>
+        <target>Więcej wpisów</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.more_from_blog">
+        <source>More from the blog</source>
+        <target>Więcej z bloga</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.see_all_posts">
+        <source>See all posts</source>
+        <target>Zobacz wszystkie wpisy</target>
+      </trans-unit>
+
+      <!-- Strona tagu (tag.php, meta i tytuł). -->
+      <trans-unit id="quince.blog.tag_title">
+        <source>#%s — Blog</source>
+        <target>#%s — Blog</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.tag_description">
+        <source>Posts tagged with %s</source>
+        <target>Wpisy oznaczone tagiem %s</target>
+      </trans-unit>
+
+    </body>
+  </file>
+</xliff>

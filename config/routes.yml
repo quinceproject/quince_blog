@@ -1,0 +1,147 @@
+# Trasy panelu quince_blog. `_legacy_controller: AdminQuinceBlog` — zakładka
+# zadeklarowana w `quince_blog.php::installTabs()`, od niej PrestaShop
+# sprawdza uprawnienia do każdej z tych tras.
+
+quince_blog_posts:
+  path: quince/blog/posts
+  methods: [GET]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\PostsController::indexAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog'
+
+quince_blog_posts_edit:
+  path: quince/blog/posts/{id}/edit
+  methods: [GET]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\PostsController::editAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog'
+
+quince_blog_posts_save:
+  path: quince/blog/posts/save
+  methods: [POST]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\PostsController::saveAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog:save'
+
+quince_blog_posts_delete:
+  path: quince/blog/posts/delete
+  methods: [POST]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\PostsController::deleteAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog'
+
+quince_blog_posts_bulk:
+  path: quince/blog/posts/bulk
+  methods: [POST]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\PostsController::bulkAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog'
+
+quince_blog_categories:
+  path: quince/blog/categories
+  methods: [GET]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\CategoriesController::indexAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog'
+
+quince_blog_categories_edit:
+  path: quince/blog/categories/{id}/edit
+  methods: [GET]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\CategoriesController::editAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog'
+
+quince_blog_categories_save:
+  path: quince/blog/categories/save
+  methods: [POST]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\CategoriesController::saveAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog:save'
+
+quince_blog_categories_delete:
+  path: quince/blog/categories/delete
+  methods: [POST]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\CategoriesController::deleteAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog'
+
+quince_blog_tags:
+  path: quince/blog/tags
+  methods: [GET]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\TagsController::indexAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog'
+
+quince_blog_tags_save:
+  path: quince/blog/tags/save
+  methods: [POST]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\TagsController::saveAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog:save'
+
+quince_blog_tags_delete:
+  path: quince/blog/tags/delete
+  methods: [POST]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\TagsController::deleteAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog'
+
+quince_blog_teasers:
+  path: quince/blog/teasers
+  methods: [GET]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\TeasersController::indexAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog'
+
+quince_blog_teasers_edit:
+  path: quince/blog/teasers/{key}/edit
+  methods: [GET]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\TeasersController::editAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog'
+
+quince_blog_teasers_save:
+  path: quince/blog/teasers/save
+  methods: [POST]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\TeasersController::saveAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog:save'
+
+quince_blog_teasers_delete:
+  path: quince/blog/teasers/delete
+  methods: [POST]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\TeasersController::deleteAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog'
+
+quince_blog_settings:
+  path: quince/blog/settings
+  methods: [GET]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\SettingsController::indexAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog'
+
+quince_blog_settings_save:
+  path: quince/blog/settings/save
+  methods: [POST]
+  defaults:
+    _controller: Quince\Blog\Controller\Admin\SettingsController::saveAction
+    _legacy_controller: 'AdminQuinceBlog'
+    _legacy_link: 'AdminQuinceBlog:save'

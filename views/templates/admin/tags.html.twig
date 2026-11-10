@@ -1,0 +1,111 @@
+{# Tagi bloga: płaska lista, dodawanie i edycja na tym samym ekranie — tag to
+   tylko nazwa per język, osobna strona edycji byłaby krokiem bez powodu. #}
+{% extends '@Modules/quince_engine/views/templates/admin/layout.html.twig' %}
+{% import '@Modules/quince_engine/views/templates/admin/_macros/icons.html.twig' as icons %}
+
+{% trans_default_domain 'Modules.Quinceblog.Admin' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('../modules/quince_engine/views/js/vendor/alpine.min.js') ~ qcVer }}" defer></script>
+{% endblock %}
+
+{% block quince_body %}
+<div class="qc-stack" x-data="quinceTags()">
+
+    {# ── Dodaj / edytuj ── #}
+    <div class="qc-card">
+        <div class="qc-card-head">
+            <div class="qc-card-title" x-text="editingId ? '{{ 'Edit tag'|trans|e('js') }}' : '{{ 'New tag'|trans|e('js') }}'"></div>
+        </div>
+        <div class="qc-card-body">
+            <form method="post" action="{{ path('quince_blog_tags_save') }}" style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('quince_blog_tags_save') }}">
+                <input type="hidden" name="id_tag" :value="editingId">
+                <div class="qc-field" style="margin:0; flex:1; min-inline-size:220px">
+                    <label class="qc-label">{{ 'Name'|trans }}</label>
+                    <div class="qc-multilang-row">
+                        <input type="text" class="qc-field-base qc-focusable" spellcheck="false"
+                               :name="'lang[' + lang + '][name]'" x-model="name[lang]">
+                        <button type="button" class="qc-lang-toggle" @click="langOpen = !langOpen">
+                            <span class="qc-lang-dot" :class="String(name[lang] || '').trim() && 'qc-complete'"></span>
+                            <span x-text="languages.find(l => l.id === lang).iso"></span>
+                        </button>
+                        <div class="qc-lang-menu" x-show="langOpen" x-cloak @click.outside="langOpen = false">
+                            <template x-for="l in languages" :key="l.id">
+                                <div class="qc-lang-row" :class="lang === l.id && 'qc-current'" @click="lang = l.id; langOpen = false">
+                                    <span class="qc-lang-dot" :class="String(name[l.id] || '').trim() && 'qc-complete'"></span>
+                                    <span class="qc-lang-row-name" x-text="l.name"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <template x-for="l in languages" :key="'h' + l.id"><template x-if="l.id !== lang">
+                        <input type="hidden" :name="'lang[' + l.id + '][name]'" :value="name[l.id] || ''">
+                    </template></template>
+                </div>
+                <button type="submit" class="qc-btn qc-btn-primary">{{ icons.icon('check', 14) }} {{ 'Save'|trans }}</button>
+                <button type="button" class="qc-btn qc-btn-text" x-show="editingId" @click="reset()">{{ 'Cancel'|trans }}</button>
+            </form>
+        </div>
+    </div>
+
+    {# ── Lista ── #}
+    <div class="qc-table-wrap">
+        <table class="qc-table">
+            <thead><tr><th>{{ 'Name'|trans }}</th><th>{{ 'Posts'|trans }}</th><th style="width:80px"></th></tr></thead>
+            <tbody>
+                {% for tag in rows %}
+                    <tr>
+                        <td>{{ tag.lang[languages|filter(l => l.default)|first.id_lang].name|default('—') }}</td>
+                        <td>{{ tag.post_count }}</td>
+                        <td>
+                            <div class="qc-row-actions" style="opacity:1">
+                                <button type="button" class="qc-icon-btn"
+                                        @click="edit({{ tag.id_tag }}, {{ tag.lang|map(l => l.name)|json_encode|raw }})">
+                                    {{ icons.icon('edit', 14) }}
+                                </button>
+                                <form method="post" action="{{ path('quince_blog_tags_delete') }}" style="display:inline">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('quince_blog_tags_delete') }}">
+                                    <input type="hidden" name="id" value="{{ tag.id_tag }}">
+                                    <button type="submit" class="qc-icon-btn qc-danger" onclick="return confirm('{{ 'Remove this tag?'|trans|e('js') }}')">
+                                        {{ icons.icon('trash', 14) }}
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="3"><div class="qc-empty"><div class="qc-empty-text">{{ 'No tag yet.'|trans }}</div></div></td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function quinceTags() {
+    const LANGUAGES = {{ languages|map(l => {id: l.id_lang, name: l.name, iso: l.iso_code|upper, default: l.default})|json_encode|raw }};
+    const DEFAULT_LANG = (LANGUAGES.find(l => l.default) || LANGUAGES[0]).id;
+
+    return {
+        languages: LANGUAGES,
+        lang: DEFAULT_LANG,
+        langOpen: false,
+        editingId: 0,
+        name: {},
+
+        edit(id, names) {
+            this.editingId = id;
+            this.name = names || {};
+            this.lang = DEFAULT_LANG;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+        reset() {
+            this.editingId = 0;
+            this.name = {};
+        }
+    };
+}
+</script>
+{% endblock %}
