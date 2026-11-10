@@ -568,17 +568,29 @@
         <source>Blog in search results</source>
         <target>Blog w wynikach wyszukiwania</target>
       </trans-unit>
+      <trans-unit id="quince.blog.seo.own_fields">
+        <source>Categories and posts have their own SEO fields, on their edit screens.</source>
+        <target>Kategorie i wpisy mają własne pola SEO, w swojej edycji.</target>
+      </trans-unit>
       <trans-unit id="quince.blog.seo.list_title">
-        <source>Post list title</source>
-        <target>Tytuł listy wpisów</target>
+        <source>Blog home page title</source>
+        <target>Tytuł strony głównej bloga</target>
       </trans-unit>
       <trans-unit id="quince.blog.seo.list_title_hint">
-        <source>Shown in the browser tab and in search results. Left empty: “Blog”. The RSS feed uses the same title.</source>
-        <target>Widać go na karcie przeglądarki i w wynikach wyszukiwania. Puste pole: „Blog”. Kanał RSS ma ten sam tytuł.</target>
+        <source>The page with all posts. Shown in the browser tab and in search results. Left empty: “Blog”. The RSS feed uses the same title.</source>
+        <target>Strona ze wszystkimi wpisami. Tytuł widać na karcie przeglądarki i w wynikach wyszukiwania. Puste pole: „Blog”. Kanał RSS ma ten sam tytuł.</target>
       </trans-unit>
       <trans-unit id="quince.blog.seo.list_description">
-        <source>Post list description</source>
-        <target>Opis listy wpisów</target>
+        <source>Blog home page description</source>
+        <target>Opis strony głównej bloga</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.seo.cat_title_hint">
+        <source>Left empty: the category name.</source>
+        <target>Puste pole: nazwa kategorii.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.seo.cat_desc_hint">
+        <source>Left empty: the beginning of the description.</source>
+        <target>Puste pole: początek opisu.</target>
       </trans-unit>
       <trans-unit id="quince.blog.seo.list_description_hint">
         <source>Shown under the title in search results. Left empty: no description.</source>

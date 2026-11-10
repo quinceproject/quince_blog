@@ -4,6 +4,24 @@ All notable changes to this module are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the versioning follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2] - 2026-11-10
+
+### Added
+
+- SEO fields on the blog category edit screen: meta title and meta description, per
+  language.
+
+### Fixed
+
+- Saving a blog category no longer swaps its languages. The edit screen showed the text
+  of one language in the field of another, so every save mixed them up.
+- Saving a blog category no longer clears its meta title and meta description.
+
+### Changed
+
+- The blog settings call the post list the blog home page and point to the own SEO
+  fields of categories and posts.
+
 ## [0.4.1] - 2026-11-10
 
 ### Added

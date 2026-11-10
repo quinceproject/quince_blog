@@ -24,18 +24,9 @@
 
     <div class="qc-card">
         <div class="qc-card-body qc-stack">
-            {% set names = {} %}
-            {% set slugs = {} %}
-            {% set descriptions = {} %}
-            {% for lang in languages %}
-                {% set names = names|merge({(lang.id_lang): category.lang[lang.id_lang].name|default('')}) %}
-                {% set slugs = slugs|merge({(lang.id_lang): category.lang[lang.id_lang].slug|default('')}) %}
-                {% set descriptions = descriptions|merge({(lang.id_lang): category.lang[lang.id_lang].description|default('')}) %}
-            {% endfor %}
-
-            {{ fields.multilang('name', 'Name'|trans, languages, names) }}
-            {{ fields.multilang('slug', 'Slug'|trans, languages, slugs, '', 'Left empty, built from the name.'|trans) }}
-            {{ fields.multilangArea('description', 'Description'|trans, languages, descriptions, '', '', 3) }}
+            {{ fields.multilang('name', 'Name'|trans, languages, values.name) }}
+            {{ fields.multilang('slug', 'Slug'|trans, languages, values.slug, '', 'Left empty, built from the name.'|trans) }}
+            {{ fields.multilangArea('description', 'Description'|trans, languages, values.description, '', '', 3) }}
 
             <div class="qc-form-grid qc-form-grid-2">
                 <div class="qc-field">
@@ -67,6 +58,16 @@
             <div class="qc-field">
                 {{ fields.toggle('active', category is null or category.active, 'Visible in the shop'|trans) }}
             </div>
+        </div>
+    </div>
+
+    <div class="qc-card">
+        <div class="qc-card-head">
+            <div><div class="qc-card-title">{{ 'SEO'|trans }}</div></div>
+        </div>
+        <div class="qc-card-body qc-stack">
+            {{ fields.multilang('meta_title', 'Meta title'|trans, languages, values.meta_title, '', 'Left empty: the category name.'|trans) }}
+            {{ fields.multilangArea('meta_description', 'Meta description'|trans, languages, values.meta_description, '', 'Left empty: the beginning of the description.'|trans, 2) }}
         </div>
     </div>
 </form>

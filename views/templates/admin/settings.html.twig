@@ -79,8 +79,9 @@
             <div><div class="qc-card-title">{{ 'Blog in search results'|trans }}</div></div>
         </div>
         <div class="qc-card-body qc-stack">
-            {{ fields.multilang('list_title', 'Post list title'|trans, languages, seo.list_title, '', 'Shown in the browser tab and in search results. Left empty: “Blog”. The RSS feed uses the same title.'|trans) }}
-            {{ fields.multilangArea('list_description', 'Post list description'|trans, languages, seo.list_description, '', 'Shown under the title in search results. Left empty: no description.'|trans, 2) }}
+            <div class="qc-hint">{{ 'Categories and posts have their own SEO fields, on their edit screens.'|trans }}</div>
+            {{ fields.multilang('list_title', 'Blog home page title'|trans, languages, seo.list_title, '', 'The page with all posts. Shown in the browser tab and in search results. Left empty: “Blog”. The RSS feed uses the same title.'|trans) }}
+            {{ fields.multilangArea('list_description', 'Blog home page description'|trans, languages, seo.list_description, '', 'Shown under the title in search results. Left empty: no description.'|trans, 2) }}
             {{ fields.multilang('tag_title', 'Tag page title'|trans, languages, seo.tag_title, '', '%tag% is replaced by the tag name. Left empty: “#tag name”.'|trans) }}
         </div>
     </div>

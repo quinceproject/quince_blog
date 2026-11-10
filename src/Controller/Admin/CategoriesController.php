@@ -50,10 +50,23 @@ class CategoriesController extends BlogBaseController
         // z listy wyboru, żeby panel w ogóle nie dał zbudować pętli.
         $parents = array_values(array_filter($all, static fn (array $c): bool => (int) $c['id_category'] !== $id));
 
+        // Wartości pól językowych: pole => [id_lang => tekst]. Składane tutaj, nie
+        // w szablonie: Twigowe `merge` przy kluczach liczbowych numeruje tablicę
+        // od zera, więc tekst języka 2 trafiał do pola języka 1, a zapis
+        // formularza zamieniał języki miejscami.
+        $languages = $this->languages();
+        $values = [];
+        foreach (['name', 'slug', 'description', 'meta_title', 'meta_description'] as $field) {
+            foreach ($languages as $language) {
+                $values[$field][$language['id_lang']] = (string) ($category['lang'][$language['id_lang']][$field] ?? '');
+            }
+        }
+
         return $this->renderPanel('@Modules/quince_blog/views/templates/admin/category-edit.html.twig', $this->chrome('quince_blog_categories') + [
             'category' => $category,
             'parents' => $parents,
-            'languages' => $this->languages(),
+            'languages' => $languages,
+            'values' => $values,
         ]);
     }
 
@@ -89,8 +102,10 @@ class CategoriesController extends BlogBaseController
         ];
 
         // Pola z makra `fields.multilang()`: `name_1`, `slug_1`, `description_1`…
+        // Pola meta muszą tu być: zapis kategorii nadpisuje cały wiersz językowy,
+        // więc pole pominięte w formularzu wraca do bazy puste.
         $byLang = [];
-        foreach (['name', 'slug', 'description'] as $field) {
+        foreach (['name', 'slug', 'description', 'meta_title', 'meta_description'] as $field) {
             foreach ($values as $key => $value) {
                 if (preg_match('/^' . $field . '_(\d+)$/', (string) $key, $m)) {
                     $byLang[(int) $m[1]][$field] = (string) $value;
