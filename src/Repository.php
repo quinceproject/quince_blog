@@ -21,13 +21,9 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Jeden magazyn na wszystkie operacje bazodanowe quince_blog.
  *
- * Przepisane z `FlavorBlogRepository` — ta sama świadoma decyzja o metodach
- * statycznych na tablicach zamiast ObjectModel per tabela: nic tu nie
- * korzysta z cyklu validate/save, tylko z jawnego CRUD-u. Różnica wobec
- * pierwowzoru: każda metoda dotycząca posta/kategorii/tagu bierze `$idShop`
- * i filtruje/zapisuje nim — pierwowzór dzielił treść między wszystkie sklepy
- * instalacji, co przy kilku markach w jednej grupie pokazywałoby wszystkim
- * ten sam blog.
+ * Metody statyczne na tablicach zamiast ObjectModel per tabela: nic tu nie
+ * korzysta z cyklu validate/save, tylko z jawnego CRUD-u. Każda metoda
+ * dotycząca posta/kategorii/tagu bierze `$idShop` i filtruje/zapisuje nim.
  */
 final class Repository
 {
@@ -125,7 +121,7 @@ final class Repository
     /**
      * Pełny post ze wszystkimi wierszami językowymi + powiązaniami. Sprawdza
      * `$idShop`, żeby panel jednego sklepu nie mógł otworzyć/zapisać posta
-     * innego — bez tego link z guzikiem „Edytuj" skopiowany między sklepami
+     * innego. Bez tego link z guzikiem „Edytuj" skopiowany między sklepami
      * dawałby dostęp do cudzej treści.
      */
     public static function getPostById(int $idPost, int $idShop): ?array
@@ -250,8 +246,8 @@ final class Repository
                 'robots' => in_array($robots, ['index', 'noindex'], true) ? $robots : 'index',
             ];
             // `id_shop` w WHERE, nie tylko w SET: bez niego ten UPDATE pisze
-            // po id_post/id_lang bez względu na właściciela wiersza — admin
-            // jednego sklepu mógł w ten sposób nadpisać treść posta innego
+            // po id_post/id_lang bez względu na właściciela wiersza, a admin
+            // jednego sklepu mógłby w ten sposób nadpisać treść posta innego
             // sklepu w tej samej instalacji wielosklepowej, podając jego id.
             $exists = (int) $db->getValue(
                 "SELECT 1 FROM `{$p}quince_blog_post_lang` WHERE id_post = " . $idPost . " AND id_lang = " . $idLang . " AND id_shop = " . $idShop
@@ -692,7 +688,7 @@ final class Repository
                 'meta_title' => (string) ($fields['meta_title'] ?? ''),
                 'meta_description' => (string) ($fields['meta_description'] ?? ''),
             ];
-            // `id_shop` w WHERE — ten sam powód co w `savePost()`.
+            // `id_shop` w WHERE: ten sam powód co w `savePost()`.
             $exists = (int) $db->getValue("SELECT 1 FROM `{$p}quince_blog_category_lang` WHERE id_category = " . $idCat . ' AND id_lang = ' . $idLang . ' AND id_shop = ' . $idShop);
             if ($exists) {
                 $db->execute("UPDATE `{$p}quince_blog_category_lang` SET " . self::buildSet($data, ['id_category', 'id_lang']) . ' WHERE id_category = ' . $idCat . ' AND id_lang = ' . $idLang . ' AND id_shop = ' . $idShop);
@@ -781,7 +777,7 @@ final class Repository
             $slug = !empty($fields['slug']) ? self::slugify($fields['slug']) : self::slugify($fields['name'] ?? '');
             $slug = self::ensureUniqueTagSlug($slug, $idShop, $idLang, $idTag);
             $data = ['id_tag' => $idTag, 'id_lang' => $idLang, 'id_shop' => $idShop, 'name' => (string) ($fields['name'] ?? ''), 'slug' => (string) $slug];
-            // `id_shop` w WHERE — ten sam powód co w `savePost()`.
+            // `id_shop` w WHERE: ten sam powód co w `savePost()`.
             $exists = (int) $db->getValue("SELECT 1 FROM `{$p}quince_blog_tag_lang` WHERE id_tag = " . $idTag . ' AND id_lang = ' . $idLang . ' AND id_shop = ' . $idShop);
             if ($exists) {
                 $db->execute("UPDATE `{$p}quince_blog_tag_lang` SET " . self::buildSet($data, ['id_tag', 'id_lang']) . ' WHERE id_tag = ' . $idTag . ' AND id_lang = ' . $idLang . ' AND id_shop = ' . $idShop);
@@ -856,7 +852,7 @@ final class Repository
     }
 
     /**
-     * To samo co `getImageById()`, ale dla wielu zdjęć naraz — jedno
+     * To samo co `getImageById()`, ale dla wielu zdjęć naraz: jedno
      * zapytanie zamiast jednego na pozycję listy wpisów.
      *
      * @param int[] $ids
@@ -898,7 +894,7 @@ final class Repository
 
     /**
      * Podpis pod zdjęciem, odczytany z `caption_json`, po jednej pozycji na
-     * język. Brak kolumny albo pusty JSON zwraca pustą tablicę — szablon
+     * język. Brak kolumny albo pusty JSON zwraca pustą tablicę. Szablon
      * i panel traktują to jak brak podpisu, nie jak błąd.
      *
      * @return array<int,string>
@@ -965,7 +961,7 @@ final class Repository
         return $s !== false && $s !== '' ? $s : strtolower(preg_replace('/[^a-z0-9-]+/i', '-', $input) ?? 'post');
     }
 
-    /** Slug unikalny w obrębie (sklep, język) — dwa sklepy mogą mieć ten sam slug, dwa posty jednego sklepu nie. */
+    /** Slug unikalny w obrębie (sklep, język): dwa sklepy mogą mieć ten sam slug, dwa posty jednego sklepu nie. */
     private static function ensureUniquePostSlug(string $slug, int $idShop, int $idLang, int $idPost): string
     {
         return self::ensureUniqueSlug('quince_blog_post_lang', 'slug', $slug, $idShop, $idLang, 'id_post', $idPost);
@@ -1005,12 +1001,12 @@ final class Repository
     }
 
     /**
-     * `Db::insert()` w tej wersji core NIE escapuje wartości tekstowych —
+     * `Db::insert()` w tej wersji core NIE escapuje wartości tekstowych:
      * owija je w cudzysłów wprost, bez `pSQL()` (w przeciwieństwie do
      * `buildSet()` używanego przy UPDATE). Apostrof w tytule, treści czy
-     * odpowiedzi FAQ wywalał wtedy zapytanie. Ta funkcja escapuje tekstowe
+     * odpowiedzi FAQ wywala wtedy zapytanie. Ta funkcja escapuje tekstowe
      * wartości TUŻ PRZED insertem, więc `$data` przekazywane też do
-     * `buildSet()` (UPDATE) zostaje nietknięte — podwójne escapowanie
+     * `buildSet()` (UPDATE) zostaje nietknięte. Podwójne escapowanie
      * zepsułoby apostrofy na UPDATE tak samo, jak ich brak psuje INSERT.
      */
     private static function insertEscaped(string $table, array $row): void

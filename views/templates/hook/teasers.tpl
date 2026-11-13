@@ -1,9 +1,9 @@
 {**
- * Zajawki bloga — osadzenie gdziekolwiek, każde umieszczenie z panelu
+ * Zajawki bloga: osadzenie gdziekolwiek, każde umieszczenie z panelu
  * (Blog → Teasers) pod WŁASNYM hookiem, bez parametru:
  *   {hook h='displayQuinceBlogTeasersKLUCZ'}
  *
- * Znaczniki i klasy 1:1 z `makiety/zajawki-blogowe.html` — trzy układy,
+ * Znaczniki i klasy 1:1 z `makiety/zajawki-blogowe.html`. Trzy układy,
  * przełączane $qbl_teasers_layout: `hero` (Układ 1, q-posts--feature),
  * `row` (Układ 2, q-posts--grid), `strip` (Układ 3, q-posts--rail).
  *}

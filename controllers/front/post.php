@@ -23,18 +23,17 @@ class Quince_BlogPostModuleFrontController extends ModuleFrontController
 
     /**
      * Nadpisuje natywny okruszek PS9, żeby pokazywał Home → Blog →
-     * (Kategoria) → Tytuł posta — te same okruszki, co w JSON-LD.
+     * (Kategoria) → Tytuł posta, te same okruszki, co w JSON-LD.
      */
     public function getBreadcrumbLinks()
     {
         $breadcrumb = parent::getBreadcrumbLinks();
 
         // Natywny blok okruszków woła tę metodę PRZED initContent(), więc
-        // $this->postForBreadcrumb jest jeszcze puste — post trzeba znaleźć
+        // $this->postForBreadcrumb jest jeszcze puste, więc post trzeba znaleźć
         // od razu po slug z URL-a. Token podglądu sprawdzamy tym samym
-        // sposobem co w initContent() — bez tego podgląd szkicu pokazywał
-        // same "Home → Blog", bez kategorii i tytułu, bo wczesne wyszukanie
-        // pomijało nieopublikowane posty niezależnie od tokenu.
+        // sposobem co w initContent(). Bez tego podgląd szkicu pokazuje
+        // same "Home → Blog", bez kategorii i tytułu.
         if (empty($this->postForBreadcrumb)) {
             $slug = (string) Tools::getValue('slug', '');
             if ($slug !== '') {
@@ -110,7 +109,7 @@ class Quince_BlogPostModuleFrontController extends ModuleFrontController
 
         $related = Repository::getRelatedPosts($idPost, $idLang, $idShop, $layoutSettings->relatedCount());
         // Jedno zapytanie o okładki powiązanych wpisów, nie jedno na pozycję.
-        // Dopasowanie po dokładnym id_image, nie przez resolveCover() — jego
+        // Dopasowanie po dokładnym id_image, nie przez resolveCover(): jego
         // zapasowa pierwsza-miniaturka-z-galerii działa na JEDNYM poście
         // (sam post wyżej), a tu obrazy kilku różnych postów stałyby w jednej
         // tablicy i zapasowe zdjęcie trafiałoby z przypadkowego sąsiada.
@@ -151,7 +150,7 @@ class Quince_BlogPostModuleFrontController extends ModuleFrontController
         $this->postForBreadcrumb = $post;
 
         // Polecane produkty: ręcznie wybrane (priorytet), a gdy zostało
-        // miejsce i post ma limit > 0 — dobrane po natywnych tagach PS.
+        // miejsce i post ma limit > 0, dobrane po natywnych tagach PS.
         $manualIds = array_map('intval', (array) ($post['product_ids'] ?? []));
         $max = (int) ($post['featured_products_max'] ?? 0);
         if ($max > 0) {
@@ -264,7 +263,7 @@ class Quince_BlogPostModuleFrontController extends ModuleFrontController
 
     /**
      * Prezentuje polecane produkty tą samą drogą co natywny cross-selling PS9
-     * ("Klienci kupili również") — ProductAssembler + ProductPresenterFactory
+     * ("Klienci kupili również"). ProductAssembler + ProductPresenterFactory
      * dają szablonowi karty `catalog/_partials/miniatures/product.tpl` dane
      * dokładnie w kształcie, jakiego oczekuje.
      */
@@ -309,7 +308,7 @@ class Quince_BlogPostModuleFrontController extends ModuleFrontController
     {
         header('HTTP/1.1 404 Not Found');
         header('Status: 404 Not Found');
-        // Renderujemy 404 w obrębie bieżącego, w pełni złożonego kontrolera —
+        // Renderujemy 404 w obrębie bieżącego, w pełni złożonego kontrolera:
         // ręczne złożenie PageNotFoundController zostawia pusty kontener
         // Symfony i wywala "Call to a member function get() on null".
         parent::initContent();

@@ -8,8 +8,8 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    {# Skórka "prestashop" TinyMCE nie rysuje obramowania swojego kontenera —
-       własny wrapper dostaje wygląd reszty pól panelu (.qc-field-base), zamiast
+    {# Skórka "prestashop" TinyMCE nie rysuje obramowania swojego kontenera.
+       Własny wrapper dostaje wygląd reszty pól panelu (.qc-field-base), zamiast
        polegać na wewnętrznych klasach wtyczki. #}
     <style>
         .quince-blog-editor-wrap{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);overflow:hidden}
@@ -19,8 +19,8 @@
 
 {% block javascripts %}
     {{ parent() }}
-    {# Ten sam edytor co w portowanym flavor_blog: natywny TinyMCE PS9 przez
-       tinySetup() z js/admin/tinymce.inc.js — niezależny od tego, czy bieżąca
+    {# Natywny TinyMCE PS9 przez tinySetup() z js/admin/tinymce.inc.js,
+       niezależny od tego, czy bieżąca
        strona załadowała bundel komponentów nowego panelu (CMS ma własny,
        nasza strona nie). #}
     <script src="/js/tiny_mce/tinymce.min.js" defer></script>
@@ -55,7 +55,7 @@
             <div class="qc-card">
                 <div class="qc-card-head">
                     <div class="qc-card-title">{{ 'Content'|trans }}</div>
-                    {# Jeden przełącznik języka dla całej karty — Title, Slug, Excerpt
+                    {# Jeden przełącznik języka dla całej karty: Title, Slug, Excerpt
                        i Content dzielą tę samą zmienną `lang`, więc dostają jeden
                        wspólny select zamiast osobnego przy każdym polu. #}
                     <div class="qc-multilang-row" style="width:auto">
@@ -105,10 +105,10 @@
                     <div class="qc-field">
                         <label class="qc-label">{{ 'Content'|trans }}</label>
                         {# Edytor TinyMCE (komponent core'u PS9, ten sam co CMS/opisy produktów)
-                           potrzebuje JEDNEGO STAŁEGO pola na język — nie da się go, jak
+                           potrzebuje JEDNEGO STAŁEGO pola na język. Nie da się go, jak
                            pozostałych pól, przełączać przez podmianę `name`/wartości na
                            jednym elemencie. Renderujemy więc po jednym textarea na język,
-                           cały czas obecne w DOM-ie (x-show, nigdy x-if — inaczej TinyMCE
+                           cały czas obecne w DOM-ie (x-show, nigdy x-if, bo inaczej TinyMCE
                            traci uchwyt), widoczne/ukryte zależnie od wybranego języka. #}
                         <div class="quince-blog-editor-wrap">
                             {% for l in languages %}
@@ -469,13 +469,12 @@ function quincePostEdit() {
                 .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
         },
 
-        // Edytor Content: tinySetup() z js/admin/tinymce.inc.js (ten sam mechanizm
-        // co w portowanym flavor_blog), na textarea renderowanych po jednym na
-        // język (patrz komentarz przy polu w markupie). Po przełączeniu języka
-        // trzeba wymusić przerysowanie — ten sam zabieg, którego używa własny
-        // mechanizm zakładek językowych CMS-a w panelu PS.
+        // Edytor Content: tinySetup() z js/admin/tinymce.inc.js, na textarea
+        // renderowanych po jednym na język (patrz komentarz przy polu w markupie).
+        // Po przełączeniu języka trzeba wymusić przerysowanie, tym samym zabiegiem,
+        // którego używa mechanizm zakładek językowych CMS-a w panelu PS.
         initEditor() {
-            // $nextTick — Alpine musi najpierw usunąć x-cloak i ustawić x-show
+            // $nextTick: Alpine musi najpierw usunąć x-cloak i ustawić x-show
             // na textarea bieżącego języka; TinyMCE nie podłącza się do elementu,
             // który w chwili inicjalizacji jest display:none.
             this.$nextTick(() => {

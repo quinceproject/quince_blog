@@ -15,7 +15,7 @@ if (!defined('_PS_VERSION_')) {
  * Quince Blog 0.2.0 → 0.3.0
  *
  * - quince_blog_post.reading_time usunięty: liczony przy każdym zapisie,
- *   ale nigdzie na froncie ani w panelu nie wyświetlany — martwe dane.
+ *   ale nigdzie na froncie ani w panelu nie wyświetlany.
  *
  * Idempotentnie: sprawdza istnienie kolumny przed DROP.
  */

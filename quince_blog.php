@@ -16,8 +16,8 @@ if (!defined('_PS_VERSION_')) {
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require_once __DIR__ . '/vendor/autoload.php';
 } else {
-    // Przepisane z quince_engine: autoloader ręczny, dopóki moduł nie ma
-    // composerowego vendor/ — src/ zmiany widać od razu, bez `composer dump-autoload`.
+    // Autoloader ręczny, gdy moduł nie ma composerowego vendor/. Zmiany
+    // w src/ widać od razu, bez `composer dump-autoload`.
     spl_autoload_register(static function (string $class): void {
         $prefix = 'Quince\\Blog\\';
         if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
@@ -33,19 +33,12 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 /**
  * Blog Quince: wpisy, kategorie, tagi, zajawki do osadzenia gdziekolwiek.
  *
- * Przepisany z `flavor_blog` (dalej nietknięty — żadna z tych dwóch
- * instalacji się nie kasuje). Różnice
- * wobec pierwowzoru:
- *   - wielosklepowość: `id_shop` na wpisie, kategorii i tagu — tamten moduł
- *     dzielił treść między wszystkie sklepy instalacji, co przy kilku markach
- *     w jednej grupie sklepów pokazywałoby
- *     wszystkim ten sam blog,
- *   - panel: kontrolery Symfony + Twig (qc-*), jak reszta silnika Quince —
- *     tamten używał starego `ModuleAdminController` + Smarty,
- *   - front: szablony Smarty na tokenach Quince (q-*) zamiast `--flavor-*`,
+ *   - wielosklepowość: `id_shop` na wpisie, kategorii i tagu, każdy sklep
+ *     ma własny blog,
+ *   - panel: kontrolery Symfony + Twig (qc-*), jak reszta silnika Quince,
+ *   - front: szablony Smarty na tokenach Quince (q-*),
  *   - zajawki: trzy układy z makiety `makiety/zajawki-blogowe.html`
- *     (wyróżniony+lista, rząd równych kafli, taśma zwarta) zamiast dwóch
- *     w pierwowzorze.
+ *     (wyróżniony+lista, rząd równych kafli, taśma zwarta).
  */
 class Quince_Blog extends Module
 {
@@ -81,7 +74,7 @@ class Quince_Blog extends Module
             return false;
         }
 
-        // Zajawki NIE mają jednego stałego hooka — każde umieszczenie z panelu
+        // Zajawki NIE mają jednego stałego hooka: każde umieszczenie z panelu
         // dostaje własny, dynamicznie nazwany hook (patrz TeaserSettings
         // i __call() niżej). Tu tylko dorejestrowanie tych, które już istnieją
         // w konfiguracji (ponowna instalacja modułu).
@@ -130,9 +123,8 @@ class Quince_Blog extends Module
 
         $sql = [];
 
-        // POST — pola niezależne od języka. `id_shop`: wpis należy do JEDNEGO
-        // sklepu — artykuł napisany dla jednej marki nie ma czego robić
-        // w sklepie drugiej, inna marka, inny czytelnik.
+        // POST: pola niezależne od języka. `id_shop`: wpis należy do JEDNEGO
+        // sklepu.
         $sql[] = "CREATE TABLE IF NOT EXISTS `{$p}quince_blog_post` (
             `id_post` INT UNSIGNED NOT NULL AUTO_INCREMENT,
             `id_shop` INT UNSIGNED NOT NULL,
@@ -150,7 +142,7 @@ class Quince_Blog extends Module
             KEY `shop_status_pub` (`id_shop`, `status`, `date_pub`)
         ) ENGINE={$engine} DEFAULT CHARSET=utf8mb4;";
 
-        // POST_LANG — pola tłumaczone. Slug unikalny per (sklep, język): PL i EN
+        // POST_LANG: pola tłumaczone. Slug unikalny per (sklep, język): PL i EN
         // mogą dzielić ciąg, ale dwa sklepy też, bo slug wchodzi do adresu razem
         // z prefiksem bloga tego sklepu.
         $sql[] = "CREATE TABLE IF NOT EXISTS `{$p}quince_blog_post_lang` (
@@ -171,8 +163,7 @@ class Quince_Blog extends Module
             UNIQUE KEY `slug_shop_lang` (`slug`, `id_shop`, `id_lang`)
         ) ENGINE={$engine} DEFAULT CHARSET=utf8mb4;";
 
-        // CATEGORY — hierarchia, parent_id puste = korzeń. Per sklep z tego
-        // samego powodu co post: dwie marki nie dzielą jednego drzewa kategorii.
+        // CATEGORY: hierarchia, parent_id puste = korzeń. Per sklep, jak post.
         $sql[] = "CREATE TABLE IF NOT EXISTS `{$p}quince_blog_category` (
             `id_category` INT UNSIGNED NOT NULL AUTO_INCREMENT,
             `id_shop` INT UNSIGNED NOT NULL,
@@ -200,7 +191,7 @@ class Quince_Blog extends Module
             UNIQUE KEY `slug_shop_lang` (`slug`, `id_shop`, `id_lang`)
         ) ENGINE={$engine} DEFAULT CHARSET=utf8mb4;";
 
-        // POST <-> CATEGORY (M2M). Bez własnego `id_shop` — obie strony już
+        // POST <-> CATEGORY (M2M). Bez własnego `id_shop`: obie strony już
         // należą do tego samego sklepu, bo kategoria spoza sklepu posta nie
         // trafi na listę wyboru w panelu.
         $sql[] = "CREATE TABLE IF NOT EXISTS `{$p}quince_blog_post_category` (
@@ -210,8 +201,7 @@ class Quince_Blog extends Module
             KEY `id_category` (`id_category`)
         ) ENGINE={$engine} DEFAULT CHARSET=utf8mb4;";
 
-        // TAG — per sklep, ten sam powód co kategoria: luźne słownictwo własne
-        // jednej marki.
+        // TAG: per sklep, jak kategoria.
         $sql[] = "CREATE TABLE IF NOT EXISTS `{$p}quince_blog_tag` (
             `id_tag` INT UNSIGNED NOT NULL AUTO_INCREMENT,
             `id_shop` INT UNSIGNED NOT NULL,
@@ -237,7 +227,7 @@ class Quince_Blog extends Module
             KEY `id_tag` (`id_tag`)
         ) ENGINE={$engine} DEFAULT CHARSET=utf8mb4;";
 
-        // FAQ pod postem — akordeon pytań, wielojęzyczny per pozycja.
+        // FAQ pod postem: akordeon pytań, wielojęzyczny per pozycja.
         $sql[] = "CREATE TABLE IF NOT EXISTS `{$p}quince_blog_post_faq` (
             `id_faq` INT UNSIGNED NOT NULL AUTO_INCREMENT,
             `id_post` INT UNSIGNED NOT NULL,
@@ -254,7 +244,7 @@ class Quince_Blog extends Module
             PRIMARY KEY (`id_faq`, `id_lang`)
         ) ENGINE={$engine} DEFAULT CHARSET=utf8mb4;";
 
-        // POST <-> natywny tag PS — dobór polecanych produktów po tagach
+        // POST <-> natywny tag PS: dobór polecanych produktów po tagach
         // produktu. Ręczny wybór ma pierwszeństwo, te uzupełniają do limitu.
         $sql[] = "CREATE TABLE IF NOT EXISTS `{$p}quince_blog_post_ps_tag` (
             `id_post` INT UNSIGNED NOT NULL,
@@ -263,7 +253,7 @@ class Quince_Blog extends Module
             KEY `id_tag` (`id_tag`)
         ) ENGINE={$engine} DEFAULT CHARSET=utf8mb4;";
 
-        // POST <-> PRODUCT (M2M) — ręcznie wybrane produkty-zajawki pod postem.
+        // POST <-> PRODUCT (M2M): ręcznie wybrane produkty-zajawki pod postem.
         $sql[] = "CREATE TABLE IF NOT EXISTS `{$p}quince_blog_post_product` (
             `id_post` INT UNSIGNED NOT NULL,
             `id_product` INT UNSIGNED NOT NULL,
@@ -272,7 +262,7 @@ class Quince_Blog extends Module
             KEY `id_product` (`id_product`)
         ) ENGINE={$engine} DEFAULT CHARSET=utf8mb4;";
 
-        // Ślad importu WP — po nim budują się przekierowania 301 ze starych
+        // Ślad importu WP: po nim budują się przekierowania 301 ze starych
         // adresów. Per sklep: ten sam adres WP mógłby trafić do dwóch sklepów
         // z osobnymi importami.
         $sql[] = "CREATE TABLE IF NOT EXISTS `{$p}quince_blog_import_map` (
@@ -288,7 +278,7 @@ class Quince_Blog extends Module
             KEY `id_post` (`id_post`)
         ) ENGINE={$engine} DEFAULT CHARSET=utf8mb4;";
 
-        // Galeria — bez własnego `id_shop`, dziedziczy przez `id_post`.
+        // Galeria: bez własnego `id_shop`, dziedziczy przez `id_post`.
         $sql[] = "CREATE TABLE IF NOT EXISTS `{$p}quince_blog_image` (
             `id_image` INT UNSIGNED NOT NULL AUTO_INCREMENT,
             `id_post` INT UNSIGNED NOT NULL,
@@ -349,7 +339,7 @@ class Quince_Blog extends Module
 
     private function installTabs(): bool
     {
-        // Jeden wspólny rodzic na uprawnienia, tak jak `AdminQuince` w silniku —
+        // Jeden wspólny rodzic na uprawnienia, tak jak `AdminQuince` w silniku:
         // wszystkie trasy modułu wskazują ten sam `_legacy_controller`.
         if (Tab::getIdFromClassName('AdminQuinceBlog')) {
             return true;
@@ -450,7 +440,7 @@ class Quince_Blog extends Module
 
     /**
      * `/{prefix}`, `/{prefix}/{slug}`, `/{prefix}/category/{slug}`,
-     * `/{prefix}/tag/{slug}`, `/{prefix}/feed.xml` — prefiks konfigurowalny
+     * `/{prefix}/tag/{slug}`, `/{prefix}/feed.xml`. Prefiks konfigurowalny
      * w ustawieniach, osobno dla każdego sklepu i każdego jego języka (ten sam
      * mechanizm, co `/llms.txt` w silniku).
      */
@@ -514,15 +504,15 @@ class Quince_Blog extends Module
     public function hookActionFrontControllerSetMedia(): void
     {
         // CSS/JS stron bloga idzie przez `theme.yml` (klucze `blog-list`,
-        // `blog-post` itd.), tak jak reszta motywu Quince — nie tutaj. Ten
-        // hook zostaje jako miejsce na JS-def, gdyby front wyspy go potrzebowały.
+        // `blog-post` itd.), tak jak reszta motywu Quince, nie tutaj. Hook
+        // jest miejscem na JS-def dla frontu.
     }
 
     // =========================================================================
-    // ZAJAWKI — każde umieszczenie z panelu (Blog → Teasers) ma WŁASNY hook,
+    // ZAJAWKI: każde umieszczenie z panelu (Blog → Teasers) ma WŁASNY hook,
     // bez żadnego parametru: `displayQuinceBlogTeasers` + klucz, np.
     // `displayQuinceBlogTeasersRow4`. Nazwa jest dynamiczna (sklepikarz
-    // dopisuje umieszczenia w panelu), więc PHP nie zna jej z góry — łapie ją
+    // dopisuje umieszczenia w panelu), więc PHP nie zna jej z góry. Łapie ją
     // __call(), tak jak core PrestaShopa wprost przewiduje dla modułów
     // z dynamicznie nazwanymi hookami (zob. komentarz w Hook::callHookOn()).
     // =========================================================================

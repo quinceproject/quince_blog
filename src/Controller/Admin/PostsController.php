@@ -175,9 +175,8 @@ class PostsController extends BlogBaseController
             if ($result !== null) {
                 $featuredIdImage = Repository::insertImage($idPost, $result['filename'], $result['width'], $result['height'], 0, true);
                 Repository::savePost(['id_post' => $idPost, 'id_shop' => $idShop, 'status' => $base['status'], 'featured_id_image' => $featuredIdImage], []);
-                // Stare zdjęcie wyróżnione przestaje być czymkolwiek po tej
-                // zmianie — bez tego zostawało na dysku i w bazie na zawsze,
-                // niewidoczne i niemożliwe do usunięcia z panelu.
+                // Stare zdjęcie wyróżnione kasujemy. Inaczej zostaje na dysku
+                // i w bazie, niewidoczne i niemożliwe do usunięcia z panelu.
                 if ($previousFeaturedId !== null && $previousFeaturedId !== $featuredIdImage) {
                     Repository::deleteImage($previousFeaturedId);
                 }
@@ -204,7 +203,7 @@ class PostsController extends BlogBaseController
     {
         // Przycisk usuwania wiersza żyje w TYM SAMYM formularzu co akcje
         // zbiorcze (HTML5 `formaction`/`formmethod`), więc dzieli jedno
-        // ciało żądania — stąd własne nazwane pole tokenu, nie goły
+        // ciało żądania. Stąd własne nazwane pole tokenu, nie goły
         // `_csrf_token` dzielony z `bulkAction`.
         if (!$this->isCsrfTokenValid('quince_blog_posts_delete', $request->request->get('_csrf_token_delete'))) {
             $this->addFlash('error', $this->trans('Invalid security token, please try again.', self::DOMAIN));
@@ -226,7 +225,7 @@ class PostsController extends BlogBaseController
 
     public function bulkAction(Request $request): RedirectResponse
     {
-        // Jak w `deleteAction` — ten formularz ma dwa cele (bulk i usuwanie
+        // Jak w `deleteAction`: ten formularz ma dwa cele (bulk i usuwanie
         // wiersza), więc własne nazwane pole tokenu dla tej akcji.
         if (!$this->isCsrfTokenValid('quince_blog_posts_bulk', $request->request->get('_csrf_token_bulk'))) {
             $this->addFlash('error', $this->trans('Invalid security token, please try again.', self::DOMAIN));
@@ -282,7 +281,7 @@ class PostsController extends BlogBaseController
             return [];
         }
         // `product_lang` ma wiersz na sklep (wielosklepowość), nie tylko na
-        // język — bez `id_shop` każdy produkt wychodził raz na każdy sklep
+        // język. Bez `id_shop` każdy produkt wychodzi raz na każdy sklep
         // instalacji.
         $rows = \Db::getInstance()->executeS(
             'SELECT p.id_product, pl.name

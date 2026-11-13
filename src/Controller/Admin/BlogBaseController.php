@@ -20,10 +20,8 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Wspólna podstawa ekranów modułu.
  *
- * Jest tu jedna rzecz: spis zakładek. Moduł ma cztery widoki, więc gdyby
- * każdy kontroler wypisywał listę u siebie, dołożenie piątego wymagałoby
- * poprawki w czterech miejscach — a jeden pominięty dawałby ekran bez
- * zakładki, do którego nie da się wrócić.
+ * Jest tu jedna rzecz: spis zakładek, wspólny dla wszystkich widoków. Ekran
+ * pominięty w spisie nie ma zakładki i nie da się do niego wrócić.
  */
 abstract class BlogBaseController extends QuinceController
 {
@@ -54,8 +52,8 @@ abstract class BlogBaseController extends QuinceController
             'quinceTabs' => $this->tabs(),
             'quinceTabsDomain' => self::DOMAIN,
             'quinceRoute' => $route,
-            // Boczny pasek podświetla pozycję modułu, która wskazuje wpisy —
-            // reszta ekranów to jego zakładki, nie osobne pozycje w menu.
+            // Boczny pasek podświetla pozycję modułu, która wskazuje wpisy.
+            // Reszta ekranów to jego zakładki, nie osobne pozycje w menu.
             'quinceNavRoute' => 'quince_blog_posts',
         ];
     }

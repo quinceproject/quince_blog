@@ -1,5 +1,5 @@
 {**
- * Quince Blog — pojedynczy wpis.
+ * Quince Blog: pojedynczy wpis.
  *}
 {extends file='page.tpl'}
 

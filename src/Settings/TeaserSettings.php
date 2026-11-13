@@ -22,29 +22,29 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Umieszczenia zajawek bloga — lista dowolnej długości, nie trzy sztywne
- * miejsca. Każde umieszczenie ma WŁASNY hook, bez żadnego parametru —
+ * Umieszczenia zajawek bloga: lista dowolnej długości, nie trzy sztywne
+ * miejsca. Każde umieszczenie ma WŁASNY hook, bez żadnego parametru, bo
  * silnik (strona główna, listing kategorii) umie wstawić dowolny hook po
  * samej nazwie, więc zajawki muszą dać się wpiąć tą samą drogą:
  *
  *   {hook h='displayQuinceBlogTeasersKLUCZ'}
  *
- * Klucz NIE nazywa strony — nazywa sposób prezentacji (sklepikarz może
+ * Klucz NIE nazywa strony, tylko sposób prezentacji (sklepikarz może
  * wstawić ten sam hook w dowolnym miejscu, nie tylko tam, gdzie go pierwszy
  * raz użył). Hook dla danego klucza rejestruje się dynamicznie przy zapisie
  * (patrz `save()` i `Quince_Blog::__call()` w głównym pliku modułu).
  *
  * Trzy układy z makiety (`makiety/zajawki-blogowe.html`):
- *   `hero`  — Układ 1, wyróżniony wpis + lista obok,
- *   `row`   — Układ 2, rząd równych kafli, liczba kolumn jak zajawki produktów,
- *   `strip` — Układ 3, taśma zwarta bez zajawki tekstowej, do wąskiej kolumny.
+ *   `hero`:  Układ 1, wyróżniony wpis + lista obok,
+ *   `row`:   Układ 2, rząd równych kafli, liczba kolumn jak zajawki produktów,
+ *   `strip`: Układ 3, taśma zwarta bez zajawki tekstowej, do wąskiej kolumny.
  */
 final class TeaserSettings
 {
     private const CONFIG_KEY = 'QUINCE_BLOG_TEASERS';
     private const LAYOUTS = ['hero', 'row', 'strip'];
 
-    /** Przedrostek wspólny dla wszystkich hooków zajawek — reszta nazwy to klucz z `ucfirst()`. */
+    /** Przedrostek wspólny dla wszystkich hooków zajawek. Reszta nazwy to klucz z `ucfirst()`. */
     public const HOOK_PREFIX = 'displayQuinceBlogTeasers';
 
     /** Pełna nazwa hooka dla danego klucza, do wstawienia w szablonie. */
@@ -103,7 +103,7 @@ final class TeaserSettings
     }
 
     /**
-     * Zapisuje jedno umieszczenie — nowe (gdy `$originalKey` jest puste) albo
+     * Zapisuje jedno umieszczenie: nowe (gdy `$originalKey` jest puste) albo
      * istniejące pod `$originalKey` (klucz dało się po drodze zmienić).
      * Zwraca ostateczny klucz, pod jakim trafiło do zapisu.
      *
@@ -159,7 +159,7 @@ final class TeaserSettings
     }
 
     /**
-     * Rejestruje hooki dla wszystkich już zapisanych umieszczeń — wywoływane
+     * Rejestruje hooki dla wszystkich już zapisanych umieszczeń. Wywoływane
      * przy install()/upgrade(), na wypadek ponownej instalacji modułu, gdy
      * `QUINCE_BLOG_TEASERS` w konfiguracji już coś zawiera.
      */
@@ -169,7 +169,7 @@ final class TeaserSettings
     }
 
     /**
-     * Dane gotowe do przypisania do Smarty dla danego umieszczenia i języka —
+     * Dane gotowe do przypisania do Smarty dla danego umieszczenia i języka.
      * `null`, gdy umieszczenie nie istnieje albo jest wyłączone (hook ma wtedy
      * nic nie wypisać).
      *
@@ -192,7 +192,7 @@ final class TeaserSettings
         $idShop = (int) Context::getContext()->shop->id;
         $layout = $placement['layout'];
 
-        // Układ „hero" pokazuje wyróżniony wpis + trzy obok — cztery razem,
+        // Układ „hero" pokazuje wyróżniony wpis + trzy obok, cztery razem,
         // niezależnie od ustawionej liczby (tak jak w makiecie).
         $fetchCount = $layout === 'hero' ? 4 : $placement['count'];
 
@@ -244,7 +244,7 @@ final class TeaserSettings
      * Klucz umieszczenia trafia dosłownie do nazwy hooka, więc musi być
      * poprawnym fragmentem identyfikatora PHP: litera na początku, dalej
      * tylko litery i cyfry (ten sam wzorzec, którego silnik wymaga od
-     * własnych hooków wpisywanych ręcznie w panelu listingu — `hook:nazwa`).
+     * własnych hooków wpisywanych ręcznie w panelu listingu: `hook:nazwa`).
      * Duplikat dostaje przyrostek liczbowy, bo dwa umieszczenia pod tym
      * samym kluczem dzieliłyby jeden hook i nadpisywały się nawzajem.
      *
@@ -271,9 +271,9 @@ final class TeaserSettings
     }
 
     /**
-     * Rejestruje hook dla każdego klucza — nazwa jest dynamiczna (`HOOK_PREFIX`
+     * Rejestruje hook dla każdego klucza. Nazwa jest dynamiczna (`HOOK_PREFIX`
      * + klucz), więc jej nie ma w kodzie z góry. `registerHook()` sam tworzy
-     * brakujący hook i sam pomija to, co już jest zarejestrowane — bezpieczne
+     * brakujący hook i sam pomija to, co już jest zarejestrowane, więc to bezpieczne
      * wywołanie przy każdym zapisie, nie tylko przy nowym kluczu.
      *
      * @param string[] $keys

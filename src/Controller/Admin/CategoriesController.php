@@ -46,7 +46,7 @@ class CategoriesController extends BlogBaseController
         }
 
         $all = Repository::listCategories($idLang, $idShop);
-        // Kategoria nie może być rodzicem samej siebie — przy edycji odpada
+        // Kategoria nie może być rodzicem samej siebie: przy edycji odpada
         // z listy wyboru, żeby panel w ogóle nie dał zbudować pętli.
         $parents = array_values(array_filter($all, static fn (array $c): bool => (int) $c['id_category'] !== $id));
 
@@ -86,10 +86,10 @@ class CategoriesController extends BlogBaseController
             'id_shop' => $idShop,
             'id_parent' => (int) ($values['id_parent'] ?? 0) ?: null,
             'position' => (int) ($values['position'] ?? 0),
-            // `<input type="color">` nie umie być puste — przeglądarka zawsze
+            // `<input type="color">` nie umie być puste: przeglądarka zawsze
             // wysyła jakiś kod (domyślnie #000000), nawet gdy sprzedawca nigdy
             // nie dotknął próbnika. Bez osobnej zgody ("Use this colour") każdy
-            // zapis formularza cicho ustawiał czarny kolor wszystkim kategoriom.
+            // zapis formularza ustawiałby czarny kolor wszystkim kategoriom.
             //
             // Kształt `#rrggbb` wymuszony tu, nie tylko w `pSQL()` przy zapisie:
             // ta wartość wraca później wprost w atrybucie `style` plakietki na

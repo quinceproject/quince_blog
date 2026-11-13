@@ -19,7 +19,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Obrazy wpisów — zdjęcie wyróżnione i galeria.
+ * Obrazy wpisów: zdjęcie wyróżnione i galeria.
  *
  * Katalog `img/blog/` leży poza drzewem modułu z tego samego powodu, co
  * zdjęcia osób w `quince_contacts`: odinstalowanie albo aktualizacja modułu
@@ -56,7 +56,7 @@ final class ImageStore
     /**
      * Przyjęcie wgranego pliku. Zwraca nazwę zapisanego pliku i jego wymiary,
      * albo null, gdy nic nie wgrano albo plik nie przeszedł sprawdzenia.
-     * Sprawdzamy sam plik, nie jego nazwę ani deklarowany typ — rozszerzenie
+     * Sprawdzamy sam plik, nie jego nazwę ani deklarowany typ: rozszerzenie
      * i nagłówek da się dopisać do czegokolwiek.
      *
      * @return array{filename:string,width:int,height:int}|null
@@ -81,7 +81,7 @@ final class ImageStore
         // po podmianie.
         $filename = 'p' . $idPost . '-' . uniqid('', false) . '.' . $extension;
 
-        // Plik nie trafia na dysk taki, jaki przyszedł — zostaje przepisany
+        // Plik nie trafia na dysk taki, jaki przyszedł. Zostaje przepisany
         // piksel po pikselu. Wszystko, co ktoś doczepił do obrazu poza samym
         // obrazem, ginie po drodze.
         if (!ImageManager::resize($file->getPathname(), $this->dir() . $filename, null, null, $extension)) {

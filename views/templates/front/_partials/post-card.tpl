@@ -1,6 +1,6 @@
 {**
  * Jedna karta wpisu w siatce listy/kategorii/tagu. Te same znaczniki i klasy
- * co karta w `hook/teasers.tpl` (układ „row") — jeden wygląd karty wpisu
+ * co karta w `hook/teasers.tpl` (układ „row"): jeden wygląd karty wpisu
  * w całym sklepie.
  *}
 <article class="q-post">

@@ -1,5 +1,5 @@
 {**
- * Quince Blog — lista wpisów. Ten sam bazowy układ co mapa strony
+ * Quince Blog: lista wpisów. Ten sam bazowy układ co mapa strony
  * (`cms/sitemap.tpl`), siatka kart ta sama co w zajawkach (hook/teasers.tpl).
  *}
 {extends file='page.tpl'}

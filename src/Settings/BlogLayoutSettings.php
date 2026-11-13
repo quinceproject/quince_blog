@@ -19,7 +19,7 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Szerokość strony pojedynczego wpisu, w kolumnach silnika (ta sama gałka
- * co w panelu Wygląd — Configuration::get('QUINCE_GRID_COLUMNS')). Treść i
+ * co w panelu Wygląd: Configuration::get('QUINCE_GRID_COLUMNS')). Treść i
  * zdjęcie dostają osobną liczbę kolumn: treść węziej, czytelniej; zdjęcie
  * może zająć tyle, ile silnik ma w ogóle kolumn (czyli pełny kontener).
  */
@@ -29,10 +29,10 @@ final class BlogLayoutSettings
     private const IMAGE_COLS = 'QUINCE_BLOG_IMAGE_COLS';
     private const RELATED_COUNT = 'QUINCE_BLOG_RELATED_COUNT';
 
-    /** Odstęp siatki silnika — stała w `MetricsGenerator::SPACE_UNIT`, nie ustawienie panelu. */
+    /** Odstęp siatki silnika: stała w `MetricsGenerator::SPACE_UNIT`, nie ustawienie panelu. */
     private const SPACE_UNIT_PX = 20;
 
-    /** Liczba kolumn ustawiona w silniku — górny limit obu poniższych. */
+    /** Liczba kolumn ustawiona w silniku, górny limit obu poniższych. */
     public function engineColumns(): int
     {
         $n = (int) Configuration::get('QUINCE_GRID_COLUMNS');
@@ -52,7 +52,7 @@ final class BlogLayoutSettings
 
     /**
      * Ile powiązanych wpisów pokazać pod artykułem. Karty zawsze rozciągają
-     * się na 100% szerokości kolumny treści — ta liczba jest jednocześnie
+     * się na 100% szerokości kolumny treści. Ta liczba jest jednocześnie
      * liczbą kolumn siatki zajawek (`--q-posts-cols`), więc rząd jest zawsze
      * pełny, niezależnie od wybranej wartości.
      */
@@ -65,10 +65,9 @@ final class BlogLayoutSettings
     }
 
     /**
-     * Szerokość treści w pikselach, policzona z realnych ustawień silnika
-     * — nie z CSS `calc()`. Dowiedzione w praktyce: zagnieżdżone `var()`
-     * w `calc()` nie dawały w przeglądarce oczekiwanego wyniku, a liczba
-     * w pikselach, wypisana wprost z PHP, nie zostawia tego do zgadywania.
+     * Szerokość treści w pikselach, policzona z realnych ustawień silnika,
+     * nie z CSS `calc()`: zagnieżdżone `var()` w `calc()` nie dają
+     * w przeglądarce oczekiwanego wyniku.
      */
     public function contentWidthPx(): int
     {

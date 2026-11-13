@@ -24,7 +24,7 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Umieszczenia zajawek bloga: lista dowolnej długości, każde pod WŁASNYM
  * hookiem (`TeaserSettings::HOOK_PREFIX` + klucz), bez żadnego parametru.
- * Lista i edycja to dwa osobne ekrany — tak samo jak Posts/Categories.
+ * Lista i edycja to dwa osobne ekrany, tak samo jak Posts/Categories.
  */
 class TeasersController extends BlogBaseController
 {

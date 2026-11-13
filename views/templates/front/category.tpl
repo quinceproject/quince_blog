@@ -1,5 +1,5 @@
 {**
- * Quince Blog — archiwum kategorii.
+ * Quince Blog: archiwum kategorii.
  *}
 {extends file='page.tpl'}
 

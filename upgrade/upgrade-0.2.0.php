@@ -15,7 +15,7 @@ if (!defined('_PS_VERSION_')) {
  * Quince Blog 0.1.0 → 0.2.0
  *
  * - quince_blog_image.caption_json (podpis pod zdjęciem wyróżnionym, na
- *   wpis, wielojęzyczny — ten sam zapis co `alt_json`)
+ *   wpis, wielojęzyczny, ten sam zapis co `alt_json`)
  *
  * Idempotentnie: sprawdza istnienie kolumny przed ALTER, bezpieczne do
  * odpalenia na częściowo zmigrowanej bazie.

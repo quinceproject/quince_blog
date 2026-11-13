@@ -17,7 +17,7 @@ use Quince\Blog\Seo;
 class Quince_BlogListModuleFrontController extends ModuleFrontController
 {
     /** Domyślny okruszek PS9 dla modułowego kontrolera pokazuje samo
-     * "Strona główna" jako bieżącą pozycję — nie dokłada tytułu strony. */
+     * "Strona główna" jako bieżącą pozycję i nie dokłada tytułu strony. */
     public function getBreadcrumbLinks()
     {
         $breadcrumb = parent::getBreadcrumbLinks();

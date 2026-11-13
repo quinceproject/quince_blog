@@ -79,7 +79,7 @@
     {# ── Wiersze ── #}
     <form method="post" action="{{ path('quince_blog_posts_bulk') }}">
         {# Jeden formularz obsługuje dwie trasy (bulk i usuwanie wiersza
-           przez `formaction`), więc dwa osobno nazwane tokeny — jedno pole
+           przez `formaction`), więc dwa osobno nazwane tokeny. Jedno pole
            `_csrf_token` mogłoby nieść tylko jedną z nich. #}
         <input type="hidden" name="_csrf_token_bulk" value="{{ csrf_token('quince_blog_posts_bulk') }}">
         <input type="hidden" name="_csrf_token_delete" value="{{ csrf_token('quince_blog_posts_delete') }}">

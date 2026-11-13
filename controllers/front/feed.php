@@ -18,7 +18,7 @@ class Quince_BlogFeedModuleFrontController extends ModuleFrontController
 {
     public function initContent()
     {
-        // Pomija parent::initContent() budujące koszyk/layout — oddajemy surowy XML.
+        // Pomija parent::initContent() budujące koszyk/layout: oddajemy surowy XML.
         $this->display();
     }
 

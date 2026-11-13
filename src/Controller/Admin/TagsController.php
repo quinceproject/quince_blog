@@ -22,8 +22,7 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Tagi bloga: płaska lista, bez hierarchii. Dodawanie i edycja nazw na tym
- * samym ekranie, bo tag to tylko nazwa per język — osobna strona edycji
- * byłaby krokiem bez powodu.
+ * samym ekranie, bo tag to tylko nazwa per język.
  */
 class TagsController extends BlogBaseController
 {

@@ -1,4 +1,4 @@
-# Trasy panelu quince_blog. `_legacy_controller: AdminQuinceBlog` — zakładka
+# Trasy panelu quince_blog. `_legacy_controller: AdminQuinceBlog` to zakładka
 # zadeklarowana w `quince_blog.php::installTabs()`, od niej PrestaShop
 # sprawdza uprawnienia do każdej z tych tras.
 

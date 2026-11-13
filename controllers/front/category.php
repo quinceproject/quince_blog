@@ -20,8 +20,8 @@ class Quince_BlogCategoryModuleFrontController extends ModuleFrontController
     private $blogCategory;
 
     /** Ten sam zabieg co w `post.php`: natywny blok okruszków woła tę metodę
-     * PRZED initContent(), więc $this->blogCategory jest jeszcze puste —
-     * kategorię trzeba znaleźć od razu po slug z URL-a. Bez tego okruszek
+     * PRZED initContent(), więc $this->blogCategory jest jeszcze puste.
+     * Kategorię trzeba znaleźć od razu po slug z URL-a. Bez tego okruszek
      * pomija "Blog" i skacze od razu z Home do nazwy kategorii. */
     public function getBreadcrumbLinks()
     {
@@ -57,8 +57,7 @@ class Quince_BlogCategoryModuleFrontController extends ModuleFrontController
         $idLang = (int) $this->context->language->id;
 
         // `getBreadcrumbLinks()` już ją znalazł (woła go natywny blok
-        // okruszków przed initContent()) — drugie zapytanie o to samo
-        // byłoby zbędne.
+        // okruszków przed initContent()), więc nie pytamy drugi raz.
         $category = $this->blogCategory ?? ($slug !== '' ? Repository::findCategoryBySlug($slug, $idLang, $idShop) : null);
         if (!$category) {
             header('HTTP/1.1 404 Not Found');
@@ -133,8 +132,7 @@ class Quince_BlogCategoryModuleFrontController extends ModuleFrontController
 
     /**
      * Niektóre moduły GTM/analityczne szukają `getCategory()` na kontrolerze
-     * strony kategorii, żeby wzbogacić zdarzenie o dane kategorii — ten sam
-     * zwyczaj, co we flavor_blog.
+     * strony kategorii, żeby wzbogacić zdarzenie o dane kategorii.
      */
     public function getCategory()
     {
