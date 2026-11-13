@@ -92,6 +92,42 @@ final class Seo
         }
         $page['meta']['description'] = $description;
         $context->smarty->assign('page', $page);
+
+        // Rdzeń wpisał już tytuł strony do danych strukturalnych WebPage, też za wcześnie.
+        if ($title !== '') {
+            self::applyStructuredData($context, ['webpage' => ['name' => $title]], true);
+        }
+    }
+
+    /**
+     * Dane strukturalne bloga dołożone do `$structured_data` rdzenia.
+     *
+     * PrestaShop 9.2 wypisuje w `<head>` tylko tę tablicę, a motyw pomija wtedy
+     * blok `head_microdata_special`. Rdzeń liczy ją w `initContent()`, zanim
+     * kontroler bloga wczyta wpis, więc dokładamy i podmieniamy elementy po
+     * fakcie. Element podany jako tekst JSON zostaje zdekodowany.
+     *
+     * @param array<string,array<string,mixed>|string> $items klucz => element
+     * @param bool $merge true: pola dopisane do istniejącego elementu; false: element podmieniony
+     */
+    public static function applyStructuredData(Context $context, array $items, bool $merge = false): void
+    {
+        $data = $context->smarty->getTemplateVars('structured_data');
+        if (!is_array($data)) {
+            return;
+        }
+
+        foreach ($items as $key => $item) {
+            if (is_string($item)) {
+                $item = json_decode($item, true);
+            }
+            if (!is_array($item) || $item === []) {
+                continue;
+            }
+            $data[$key] = $merge && isset($data[$key]) && is_array($data[$key]) ? array_merge($data[$key], $item) : $item;
+        }
+
+        $context->smarty->assign('structured_data', $data);
     }
 
     /** Tytuł listy wpisów z ustawień bloga; bez ustawienia samo „Blog”. Używa go też kanał RSS. */
@@ -142,7 +178,7 @@ final class Seo
             if ($slug === '' || !isset($idMap[$idLang])) {
                 continue;
             }
-            $url = $type === 'category' ? self::categoryUrl($slug, $context) : self::postUrl($slug, $context);
+            $url = $type === 'category' ? self::categoryUrl($slug, $context, $idLang) : self::postUrl($slug, $context, $idLang);
             $out[] = ['hreflang' => $idMap[$idLang], 'url' => $url];
             if ($idLang === $defaultLang) {
                 $defaultUrl = $url;
@@ -297,24 +333,47 @@ final class Seo
         return trim((string) Configuration::get('QUINCE_BLOG_ROUTE_PREFIX')) ?: 'blog';
     }
 
-    public static function listUrl(Context $context): string
+    /**
+     * Początek adresu bloga w danym języku: domena, prefiks języka, prefiks bloga.
+     *
+     * Prefiks języka dokładamy tak, jak robi to `Link::getLangLink()` dla reszty
+     * sklepu: tylko przy przyjaznych adresach i więcej niż jednym języku. Bez
+     * niego adres w języku innym niż domyślny daje 404, bo sklep rozpoznaje język
+     * po prefiksie, a slug wpisu jest w każdym języku inny.
+     */
+    private static function base(Context $context, ?int $idLang): string
     {
-        return rtrim($context->shop->getBaseURL(true), '/') . '/' . self::routePrefix();
+        $base = rtrim($context->shop->getBaseURL(true), '/') . '/';
+        $idShop = (int) $context->shop->id;
+
+        if (Configuration::get('PS_REWRITING_SETTINGS', null, null, $idShop) && Language::isMultiLanguageActivated($idShop)) {
+            $iso = Language::getIsoById($idLang ?? (int) $context->language->id);
+            if ($iso) {
+                $base .= $iso . '/';
+            }
+        }
+
+        return $base . self::routePrefix();
     }
 
-    public static function postUrl(string $slug, Context $context): string
+    public static function listUrl(Context $context, ?int $idLang = null): string
     {
-        return rtrim($context->shop->getBaseURL(true), '/') . '/' . self::routePrefix() . '/' . $slug;
+        return self::base($context, $idLang);
     }
 
-    public static function categoryUrl(string $slug, Context $context): string
+    public static function postUrl(string $slug, Context $context, ?int $idLang = null): string
     {
-        return rtrim($context->shop->getBaseURL(true), '/') . '/' . self::routePrefix() . '/category/' . $slug;
+        return self::base($context, $idLang) . '/' . $slug;
     }
 
-    public static function tagUrl(string $slug, Context $context): string
+    public static function categoryUrl(string $slug, Context $context, ?int $idLang = null): string
     {
-        return rtrim($context->shop->getBaseURL(true), '/') . '/' . self::routePrefix() . '/tag/' . $slug;
+        return self::base($context, $idLang) . '/category/' . $slug;
+    }
+
+    public static function tagUrl(string $slug, Context $context, ?int $idLang = null): string
+    {
+        return self::base($context, $idLang) . '/tag/' . $slug;
     }
 
     private static function resolveOgImage(array $post, array $images): string

@@ -102,7 +102,13 @@ class Quince_BlogCategoryModuleFrontController extends ModuleFrontController
         unset($p);
 
         $meta = Seo::buildCategoryMeta($category, $this->context);
+        $perLang = Db::getInstance()->executeS(
+            'SELECT id_lang, slug FROM `' . _DB_PREFIX_ . 'quince_blog_category_lang`'
+            . ' WHERE id_category = ' . (int) $category['id_category'] . ' AND id_shop = ' . $idShop
+        ) ?: [];
+
         $this->context->smarty->assign([
+            'blog_hreflangs' => Seo::buildHreflangs($perLang, 'category', $this->context),
             'blog_category' => $category,
             'blog_posts' => $posts,
             'blog_pagination' => Seo::buildPagination($page, $perPage, $total, Seo::categoryUrl($slug, $this->context)),

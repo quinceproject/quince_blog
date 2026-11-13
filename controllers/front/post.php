@@ -169,6 +169,13 @@ class Quince_BlogPostModuleFrontController extends ModuleFrontController
         $faqItems = Repository::getPostFaqsForLang($idPost, $idLang);
         $jsonldFaq = !empty($faqItems) ? Seo::buildFaqJsonLd($faqItems) : '';
 
+        // Okruszki rdzenia powstały bez wpisu i jego kategorii, więc podmieniamy je na nasze.
+        Seo::applyStructuredData($this->context, [
+            'blog_posting' => $jsonldPost,
+            'breadcrumbs' => $jsonldBreadcrumb,
+            'faq' => $jsonldFaq,
+        ]);
+
         $this->context->smarty->assign([
             'blog_post' => $post,
             'blog_related' => $related,

@@ -6,6 +6,11 @@
 {block name='head' append}
   <meta property="og:type" content="article">
   {if $blog_meta.og_image}<meta property="og:image" content="{$blog_meta.og_image}">{/if}
+{/block}
+
+{* Zamiast odnośników rdzenia: rdzeń zmienia tylko prefiks języka i zostawia
+   slug bieżącego języka, a wpis ma w każdym języku inny slug. *}
+{block name='head_hreflang'}
   {foreach $blog_hreflangs as $hl}
     <link rel="alternate" hreflang="{$hl.hreflang}" href="{$hl.url}">
   {/foreach}

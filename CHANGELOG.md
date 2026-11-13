@@ -4,6 +4,17 @@ All notable changes to this module are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the versioning follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.3] - 2026-11-13
+
+### Fixed
+
+- Blog posts output their structured data again (BlogPosting, breadcrumbs, FAQ). On
+  PrestaShop 9.2 the theme printed only the shop's own data and dropped the blog's.
+- Blog links in a language other than the default one now carry the language prefix in
+  the address, so they no longer lead to a "page not found".
+- The alternate language links (hreflang) of posts and categories point to the slug of
+  each language, not to the slug of the current one.
+
 ## [0.4.2] - 2026-11-10
 
 ### Added

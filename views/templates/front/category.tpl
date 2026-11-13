@@ -3,6 +3,14 @@
  *}
 {extends file='page.tpl'}
 
+{* Zamiast odnośników rdzenia: rdzeń zostawia slug bieżącego języka, a kategoria
+   ma w każdym języku inny slug. *}
+{block name='head_hreflang'}
+  {foreach $blog_hreflangs as $hl}
+    <link rel="alternate" hreflang="{$hl.hreflang}" href="{$hl.url}">
+  {/foreach}
+{/block}
+
 {block name='breadcrumb'}
   <div class="q-container q-blog-crumbs">
     {include file='_partials/breadcrumb.tpl'}

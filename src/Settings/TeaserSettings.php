@@ -15,6 +15,7 @@ use Configuration;
 use Context;
 use Module;
 use Quince\Blog\Repository;
+use Quince\Blog\Seo;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -200,18 +201,17 @@ final class TeaserSettings
             return null;
         }
 
-        $prefix = trim((string) Configuration::get('QUINCE_BLOG_ROUTE_PREFIX')) ?: 'blog';
-        $shopUrl = rtrim(Context::getContext()->shop->getBaseURL(true), '/');
+        $context = Context::getContext();
 
         $title = $placement['title'][$idLang] ?? reset($placement['title']) ?: '';
 
-        $posts = array_map(function (array $p) use ($idLang, $shopUrl, $prefix): array {
+        $posts = array_map(function (array $p) use ($idLang, $context): array {
             $categories = Repository::getPostCategories((int) $p['id_post'], $idLang);
 
             return [
                 'title' => (string) $p['title'],
                 'excerpt' => (string) ($p['excerpt'] ?? ''),
-                'url' => $shopUrl . '/' . $prefix . '/' . $p['slug'],
+                'url' => Seo::postUrl((string) $p['slug'], $context, $idLang),
                 'cover_url' => $this->coverUrl((int) ($p['featured_id_image'] ?? 0)),
                 'date_pub' => $p['date_pub'] ?? null,
                 'categories' => array_map(static fn (array $c): array => ['name' => (string) $c['name'], 'color' => (string) ($c['color'] ?? '')], $categories),
@@ -223,7 +223,7 @@ final class TeaserSettings
             'qbl_teasers_title' => $title,
             'qbl_teasers_posts' => $posts,
             'qbl_teasers_columns' => $placement['count'],
-            'qbl_teasers_all_url' => $shopUrl . '/' . $prefix,
+            'qbl_teasers_all_url' => Seo::listUrl($context, $idLang),
         ];
     }
 
