@@ -4,6 +4,18 @@ All notable changes to this module are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the versioning follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.4] - 2026-11-13
+
+### Fixed
+
+- Blog links in the default language follow the shop setting for the language prefix in
+  the address. On PrestaShop 9.2 the prefix can be turned off for the default language,
+  and the blog added it anyway, so the same post was reachable under two addresses.
+
+### Changed
+
+- Code comments tidied up. No change in how the shop works.
+
 ## [0.4.3] - 2026-11-13
 
 ### Fixed
