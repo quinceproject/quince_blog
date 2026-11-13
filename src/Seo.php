@@ -21,8 +21,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Meta tagi, hreflang i JSON-LD dla widoków bloga. Przepisane z
- * `FlavorBlogSeo` — Organization JSON-LD celowo stąd wycięty, bo to
+ * Meta tagi, hreflang i JSON-LD dla widoków bloga. Bez Organization JSON-LD:
  * zajmuje się nim quince_engine (BrandSchemaSettings) na każdej stronie
  * sklepu, nie tylko na blogu.
  */
@@ -155,7 +154,7 @@ final class Seo
     }
 
     /**
-     * Odpowiedniki posta w pozostałych językach — dla `<link rel="alternate" hreflang>`.
+     * Odpowiedniki posta w pozostałych językach, dla `<link rel="alternate" hreflang>`.
      *
      * @param array<int,array{id_lang:int,slug:string}> $perLang
      *
@@ -217,7 +216,7 @@ final class Seo
         }
 
         // `JSON_HEX_TAG`: ten znacznik idzie wprost w `<script type="application/
-        // ld+json">` bez cudzego filtrowania — tytuł albo opis z `</script>` w treści
+        // ld+json">` bez cudzego filtrowania. Tytuł albo opis z `</script>` w treści
         // wyłamałby się z bloku JSON-LD i uruchomił jako osobny znacznik. Zamienia
         // `<`/`>` na `<`/`>`, więc taki ciąg zostaje samym tekstem.
         return (string) json_encode(
@@ -239,7 +238,7 @@ final class Seo
             ];
         }
 
-        // `JSON_HEX_TAG`: patrz komentarz w `buildPostJsonLd()` — nazwa okruszka
+        // `JSON_HEX_TAG`: patrz komentarz w `buildPostJsonLd()`. Nazwa okruszka
         // (tytuł kategorii, tytuł posta) trafia tu bez przefiltrowania.
         return (string) json_encode([
             '@context' => 'https://schema.org',
@@ -249,7 +248,7 @@ final class Seo
     }
 
     /**
-     * Musi dokładnie odpowiadać widocznej liście pytań pod postem — wymóg
+     * Musi dokładnie odpowiadać widocznej liście pytań pod postem: wymóg
      * danych strukturalnych Google (i silników AI, które też czytają schema).
      *
      * @param array<int,array{question:string,answer:string}> $faqs
@@ -283,7 +282,7 @@ final class Seo
 
     /**
      * Kształt, którego oczekuje `_partials/pagination.tpl` (ten sam, którego
-     * używa listing produktów rdzenia) — numery stron, wielokropek w miejscu
+     * używa listing produktów rdzenia): numery stron, wielokropek w miejscu
      * przeskoku, „Następna" bez „Poprzednia" (wraca się przyciskiem przeglądarki).
      *
      * @return array{should_be_displayed:bool,pages:array<int,array<string,mixed>>}
@@ -343,15 +342,11 @@ final class Seo
      */
     private static function base(Context $context, ?int $idLang): string
     {
-        $base = rtrim($context->shop->getBaseURL(true), '/') . '/';
-        $idShop = (int) $context->shop->id;
-
-        if (Configuration::get('PS_REWRITING_SETTINGS', null, null, $idShop) && Language::isMultiLanguageActivated($idShop)) {
-            $iso = Language::getIsoById($idLang ?? (int) $context->language->id);
-            if ($iso) {
-                $base .= $iso . '/';
-            }
-        }
+        // Adres strony głównej w danym języku niesie przedrostek języka dokładnie
+        // według reguł rdzenia (`Link::getLangLink()`, które jest chronione):
+        // brak przy jednym języku i bez przyjaznych adresów, a na 9.2 także brak
+        // dla języka domyślnego, gdy wyłączono PS_DEFAULT_LANGUAGE_URL_PREFIX.
+        $base = rtrim($context->link->getPageLink('index', true, $idLang ?? (int) $context->language->id), '/') . '/';
 
         return $base . self::routePrefix();
     }
