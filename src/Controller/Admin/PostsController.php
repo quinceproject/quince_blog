@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Quince\Blog\Controller\Admin;
 
 use Configuration;
+use PrestaShopBundle\Security\Attribute\AdminSecurity;
 use Quince\Blog\ImageStore;
 use Quince\Blog\Repository;
 use Quince\Engine\Ui\IconLibrary;
@@ -28,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
  */
 class PostsController extends BlogBaseController
 {
+    #[AdminSecurity("is_granted('read', request.get('_legacy_controller'))", message: 'You do not have permission to view this.')]
     public function indexAction(Request $request): Response
     {
         $idShop = (int) $this->getContext()->shop->id;
@@ -70,6 +72,7 @@ class PostsController extends BlogBaseController
         ]);
     }
 
+    #[AdminSecurity("is_granted('read', request.get('_legacy_controller'))", message: 'You do not have permission to view this.')]
     public function editAction(Request $request, int $id = 0): Response
     {
         $idShop = (int) $this->getContext()->shop->id;
@@ -115,6 +118,7 @@ class PostsController extends BlogBaseController
         ]);
     }
 
+    #[AdminSecurity("is_granted('update', request.get('_legacy_controller'))", message: 'You do not have permission to change this.')]
     public function saveAction(Request $request): RedirectResponse
     {
         if (!$this->isCsrfTokenValid('quince_blog_posts_save', $request->request->get('_csrf_token'))) {
@@ -199,6 +203,7 @@ class PostsController extends BlogBaseController
         return $this->redirectToRoute('quince_blog_posts_edit', ['id' => $idPost]);
     }
 
+    #[AdminSecurity("is_granted('delete', request.get('_legacy_controller'))", message: 'You do not have permission to delete this.')]
     public function deleteAction(Request $request): RedirectResponse
     {
         // Przycisk usuwania wiersza żyje w TYM SAMYM formularzu co akcje
@@ -223,6 +228,7 @@ class PostsController extends BlogBaseController
         return $this->redirectToRoute('quince_blog_posts');
     }
 
+    #[AdminSecurity("is_granted('delete', request.get('_legacy_controller'))", message: 'You do not have permission to delete this.')]
     public function bulkAction(Request $request): RedirectResponse
     {
         // Jak w `deleteAction`: ten formularz ma dwa cele (bulk i usuwanie

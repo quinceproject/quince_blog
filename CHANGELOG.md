@@ -4,6 +4,16 @@ All notable changes to this module are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the versioning follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.5] - 2026-11-15
+
+### Security
+
+- Every back-office screen of the blog checks the employee's permissions on the
+  **Blog** tab (`AdminQuinceBlog`): view, edit and delete separately. Before, any
+  logged-in employee, whatever their profile, could open the blog screens and save
+  posts, which go out to the shop as HTML. Grant the tab to a profile under
+  **Advanced Parameters → Team → Permissions**; SuperAdmin needs nothing.
+
 ## [0.4.4] - 2026-11-13
 
 ### Fixed

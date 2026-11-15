@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Quince\Blog\Controller\Admin;
 
+use PrestaShopBundle\Security\Attribute\AdminSecurity;
 use Quince\Blog\Repository;
 use Quince\Blog\Settings\TeaserSettings;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -35,6 +36,7 @@ class TeasersController extends BlogBaseController
     {
     }
 
+    #[AdminSecurity("is_granted('read', request.get('_legacy_controller'))", message: 'You do not have permission to view this.')]
     public function indexAction(): Response
     {
         $placements = array_map(
@@ -47,6 +49,7 @@ class TeasersController extends BlogBaseController
         ]);
     }
 
+    #[AdminSecurity("is_granted('read', request.get('_legacy_controller'))", message: 'You do not have permission to view this.')]
     public function editAction(string $key = self::NEW): Response
     {
         $isNew = $key === self::NEW;
@@ -70,6 +73,7 @@ class TeasersController extends BlogBaseController
         ]);
     }
 
+    #[AdminSecurity("is_granted('update', request.get('_legacy_controller'))", message: 'You do not have permission to change this.')]
     public function saveAction(Request $request): RedirectResponse
     {
         if (!$this->isCsrfTokenValid('quince_blog_teasers_save', $request->request->get('_csrf_token'))) {
@@ -86,6 +90,7 @@ class TeasersController extends BlogBaseController
         return $this->redirectToRoute('quince_blog_teasers');
     }
 
+    #[AdminSecurity("is_granted('delete', request.get('_legacy_controller'))", message: 'You do not have permission to delete this.')]
     public function deleteAction(Request $request): RedirectResponse
     {
         if (!$this->isCsrfTokenValid('quince_blog_teasers_delete', $request->request->get('_csrf_token'))) {

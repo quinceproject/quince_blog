@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Quince\Blog\Controller\Admin;
 
+use PrestaShopBundle\Security\Attribute\AdminSecurity;
 use Quince\Blog\Repository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +24,7 @@ if (!defined('_PS_VERSION_')) {
 /** Kategorie bloga: lista, edycja, kasowanie. */
 class CategoriesController extends BlogBaseController
 {
+    #[AdminSecurity("is_granted('read', request.get('_legacy_controller'))", message: 'You do not have permission to view this.')]
     public function indexAction(): Response
     {
         $idShop = (int) $this->getContext()->shop->id;
@@ -33,6 +35,7 @@ class CategoriesController extends BlogBaseController
         ]);
     }
 
+    #[AdminSecurity("is_granted('read', request.get('_legacy_controller'))", message: 'You do not have permission to view this.')]
     public function editAction(int $id = 0): Response
     {
         $idShop = (int) $this->getContext()->shop->id;
@@ -70,6 +73,7 @@ class CategoriesController extends BlogBaseController
         ]);
     }
 
+    #[AdminSecurity("is_granted('update', request.get('_legacy_controller'))", message: 'You do not have permission to change this.')]
     public function saveAction(Request $request): RedirectResponse
     {
         if (!$this->isCsrfTokenValid('quince_blog_categories_save', $request->request->get('_csrf_token'))) {
@@ -119,6 +123,7 @@ class CategoriesController extends BlogBaseController
         return $this->redirectToRoute('quince_blog_categories');
     }
 
+    #[AdminSecurity("is_granted('delete', request.get('_legacy_controller'))", message: 'You do not have permission to delete this.')]
     public function deleteAction(Request $request): RedirectResponse
     {
         if (!$this->isCsrfTokenValid('quince_blog_categories_delete', $request->request->get('_csrf_token'))) {

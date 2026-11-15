@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Quince\Blog\Controller\Admin;
 
+use PrestaShopBundle\Security\Attribute\AdminSecurity;
 use Quince\Blog\Settings\BlogLayoutSettings;
 use Quince\Blog\Settings\SeoSettings;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -33,6 +34,7 @@ class SettingsController extends BlogBaseController
     ) {
     }
 
+    #[AdminSecurity("is_granted('read', request.get('_legacy_controller'))", message: 'You do not have permission to view this.')]
     public function indexAction(): Response
     {
         return $this->renderPanel('@Modules/quince_blog/views/templates/admin/settings.html.twig', $this->chrome('quince_blog_settings') + [
@@ -45,6 +47,7 @@ class SettingsController extends BlogBaseController
         ]);
     }
 
+    #[AdminSecurity("is_granted('update', request.get('_legacy_controller'))", message: 'You do not have permission to change this.')]
     public function saveAction(Request $request): RedirectResponse
     {
         if (!$this->isCsrfTokenValid('quince_blog_settings_save', $request->request->get('_csrf_token'))) {
