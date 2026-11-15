@@ -27,9 +27,29 @@ if (!defined('_PS_VERSION_')) {
  */
 final class Repository
 {
+    /**
+     * HMAC zamiast `Tools::hash()`: w PS 9.2 to bcrypt z losową solą, więc
+     * token wychodził za każdym razem inny i podgląd szkicu zawsze dawał 404.
+     */
     public static function previewToken(int $idPost): string
     {
-        return substr(Tools::hash('quince_blog_preview_' . $idPost), 0, 20);
+        return substr(hash_hmac('sha256', 'quince_blog_preview|' . $idPost, _COOKIE_KEY_), 0, 32);
+    }
+
+    /**
+     * Wpis widoczny dla klienta: opublikowany i z datą publikacji, która
+     * już minęła. Ten sam warunek co w `getRecentPosts()`.
+     *
+     * @param array<string,mixed> $post
+     */
+    public static function isPostLive(array $post): bool
+    {
+        if (($post['status'] ?? '') !== 'published') {
+            return false;
+        }
+        $datePub = (string) ($post['date_pub'] ?? '');
+
+        return $datePub === '' || $datePub <= date('Y-m-d H:i:s');
     }
 
     // ---------------------------------------------------------------------
@@ -54,6 +74,7 @@ final class Repository
         if (!empty($filter['status'])) {
             $where[] = "p.status = '" . pSQL($filter['status']) . "'";
         }
+        $where = array_merge($where, self::futureDateFilter($filter));
         if (!empty($filter['id_category'])) {
             $joins .= " JOIN `{$p}quince_blog_post_category` pc ON pc.id_post = p.id_post AND pc.id_category = " . (int) $filter['id_category'];
         }
@@ -98,6 +119,7 @@ final class Repository
         if (!empty($filter['status'])) {
             $where[] = "p.status = '" . pSQL($filter['status']) . "'";
         }
+        $where = array_merge($where, self::futureDateFilter($filter));
         if (!empty($filter['id_category'])) {
             $joins .= " JOIN `{$p}quince_blog_post_category` pc ON pc.id_post = p.id_post AND pc.id_category = " . (int) $filter['id_category'];
         }
@@ -116,6 +138,22 @@ final class Repository
              {$joins}
              WHERE " . implode(' AND ', $where)
         );
+    }
+
+    /**
+     * Lista opublikowanych wpisów pomija te z datą publikacji w przyszłości,
+     * inaczej wpis zaplanowany na jutro widać od dziś na liście i w RSS.
+     * Panel podaje `include_future`, bo tam właściciel ma widzieć wszystko.
+     *
+     * @return string[]
+     */
+    private static function futureDateFilter(array $filter): array
+    {
+        if (($filter['status'] ?? '') !== 'published' || !empty($filter['include_future'])) {
+            return [];
+        }
+
+        return ["(p.date_pub IS NULL OR p.date_pub <= '" . pSQL(date('Y-m-d H:i:s')) . "')"];
     }
 
     /**
@@ -160,7 +198,10 @@ final class Repository
     {
         $db = Db::getInstance();
         $p = _DB_PREFIX_;
-        $statusFilter = $includeDrafts ? '' : " AND p.status = 'published'";
+        // Podgląd szkicu (`$includeDrafts`) bierze też wpis z przyszłą datą.
+        // Kontroler sprawdza wtedy token przez `isPostLive()`.
+        $statusFilter = $includeDrafts ? '' : " AND p.status = 'published'"
+            . " AND (p.date_pub IS NULL OR p.date_pub <= '" . pSQL(date('Y-m-d H:i:s')) . "')";
         $row = $db->getRow(
             "SELECT p.*, pl.title, pl.slug, pl.excerpt, pl.content, pl.meta_title, pl.meta_description,
                     pl.og_image_override, pl.robots, pl.featured_products_heading, pl.faq_heading

@@ -57,6 +57,15 @@ class TagsController extends BlogBaseController
         $idShop = (int) $this->getContext()->shop->id;
         $values = $request->request->all();
 
+        // Tag innego sklepu: bez tej kontroli zapis dopisałby mu wiersze
+        // językowe z id_shop bieżącego sklepu.
+        $idTag = (int) ($values['id_tag'] ?? 0);
+        if ($idTag > 0 && Repository::getTagById($idTag, $idShop) === null) {
+            $this->addFlash('error', $this->trans('That tag does not exist in this shop.', self::DOMAIN));
+
+            return $this->redirectToRoute('quince_blog_tags');
+        }
+
         $base = ['id_tag' => (int) ($values['id_tag'] ?? 0) ?: null, 'id_shop' => $idShop];
 
         $byLang = [];

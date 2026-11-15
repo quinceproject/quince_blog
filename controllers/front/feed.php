@@ -55,6 +55,9 @@ class Quince_BlogFeedModuleFrontController extends ModuleFrontController
             echo '    <pubDate>' . $pubDate . "</pubDate>\n";
             $desc = trim(strip_tags((string) $p['excerpt']));
             if ($desc !== '') {
+                // `]]>` w zajawce zamknąłby CDATA przed czasem: dzielimy go
+                // na dwie sekcje, czytnik skleja je z powrotem.
+                $desc = str_replace(']]>', ']]]]><![CDATA[>', $desc);
                 echo '    <description><![CDATA[' . $desc . ']]></description>' . "\n";
             }
             echo "  </item>\n";

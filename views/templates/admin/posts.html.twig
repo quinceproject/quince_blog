@@ -33,7 +33,7 @@
 
 {% block quince_body %}
 <div class="qc-stack" x-data="{ zaznaczone: [], get ile() { return this.zaznaczone.length }, calaStrona: false,
-    przelaczStrone(v) { this.calaStrona = v; this.zaznaczone = v ? {{ rows|map(r => r.id_post)|json_encode|raw }} : []; } }">
+    przelaczStrone(v) { this.calaStrona = v; this.zaznaczone = v ? {{ rows|map(r => r.id_post)|json_encode }} : []; } }">
 
     {# ── Filtr ── #}
     <div class="qc-card">

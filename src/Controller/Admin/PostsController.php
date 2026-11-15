@@ -56,6 +56,8 @@ class PostsController extends BlogBaseController
         ], static fn ($v) => $v !== null);
         $filter['id_shop'] = $idShop;
         $filter['lang_id'] = $idLang;
+        // Panel pokazuje też wpisy zaplanowane na później, sklep je ukrywa.
+        $filter['include_future'] = true;
 
         $rows = $this->sortRows(Repository::listPosts($filter), $sort, $dir);
         $total = Repository::countPosts($filter);
@@ -131,6 +133,14 @@ class PostsController extends BlogBaseController
         $idPost = (int) $request->request->get('id_post', 0);
         $values = $request->request->all();
         $languages = $this->languages();
+
+        // Wpis innego sklepu: `savePost()` go nie ruszy, ale kategorie, tagi,
+        // produkty i FAQ poniżej zapisują się po samym id_post.
+        if ($idPost > 0 && Repository::getPostById($idPost, $idShop) === null) {
+            $this->addFlash('error', $this->trans('That post does not exist in this shop.', self::DOMAIN));
+
+            return $this->redirectToRoute('quince_blog_posts');
+        }
 
         $base = [
             'id_post' => $idPost ?: null,

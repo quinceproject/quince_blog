@@ -4,6 +4,23 @@ All notable changes to this module are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the versioning follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.6] - 2026-11-15
+
+### Fixed
+
+- **Draft preview works again.** The preview link used a hash that PrestaShop 9.2
+  salts randomly, so it never matched and always ended in a 404.
+- **Posts with a future publication date stay hidden until that date**, on the list,
+  in categories, tags, the RSS feed and under their own address. Before, a published
+  post with a future date was visible at once.
+
+### Security
+
+- A tag name with a quote can no longer run a script in the back office tag list.
+- In a multistore, saving a post, category or tag checks that it belongs to the shop
+  being edited, so an employee of one shop cannot change another shop's items.
+- An excerpt containing `]]>` no longer breaks the RSS feed.
+
 ## [0.4.5] - 2026-11-15
 
 ### Security

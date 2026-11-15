@@ -8,6 +8,18 @@
         <source>Save</source>
         <target>Zapisz</target>
       </trans-unit>
+      <trans-unit id="quince.blog.post_other_shop">
+        <source>That post does not exist in this shop.</source>
+        <target>Ten wpis nie istnieje w tym sklepie.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.category_other_shop">
+        <source>That category does not exist in this shop.</source>
+        <target>Ta kategoria nie istnieje w tym sklepie.</target>
+      </trans-unit>
+      <trans-unit id="quince.blog.tag_other_shop">
+        <source>That tag does not exist in this shop.</source>
+        <target>Ten tag nie istnieje w tym sklepie.</target>
+      </trans-unit>
       <trans-unit id="quince.blog.save_changes">
         <source>Save changes</source>
         <target>Zapisz zmiany</target>

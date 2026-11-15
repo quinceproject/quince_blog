@@ -85,6 +85,15 @@ class CategoriesController extends BlogBaseController
         $idShop = (int) $this->getContext()->shop->id;
         $values = $request->request->all();
 
+        // Kategoria innego sklepu: bez tej kontroli zapis dopisałby jej
+        // wiersze językowe z id_shop bieżącego sklepu.
+        $idCategory = (int) ($values['id_category'] ?? 0);
+        if ($idCategory > 0 && Repository::getCategoryById($idCategory, $idShop) === null) {
+            $this->addFlash('error', $this->trans('That category does not exist in this shop.', self::DOMAIN));
+
+            return $this->redirectToRoute('quince_blog_categories');
+        }
+
         $base = [
             'id_category' => (int) ($values['id_category'] ?? 0) ?: null,
             'id_shop' => $idShop,

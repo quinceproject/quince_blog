@@ -62,7 +62,7 @@
                         <td>
                             <div class="qc-row-actions" style="opacity:1">
                                 <button type="button" class="qc-icon-btn"
-                                        @click="edit({{ tag.id_tag }}, {{ tag.lang|map(l => l.name)|json_encode|raw }})">
+                                        @click="edit({{ tag.id_tag }}, {{ tag.lang|map(l => l.name)|json_encode }})">
                                     {{ icons.icon('edit', 14) }}
                                 </button>
                                 <form method="post" action="{{ path('quince_blog_tags_delete') }}" style="display:inline">

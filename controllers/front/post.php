@@ -41,7 +41,7 @@ class Quince_BlogPostModuleFrontController extends ModuleFrontController
                 $idShop = (int) $this->context->shop->id;
                 $previewToken = (string) Tools::getValue('preview', '');
                 $post = Repository::findPostBySlug($slug, $idLang, $idShop, $previewToken !== '');
-                if ($post && ($post['status'] ?? '') !== 'published' && !self::isValidPreviewToken((int) $post['id_post'], $previewToken)) {
+                if ($post && !Repository::isPostLive($post) && !self::isValidPreviewToken((int) $post['id_post'], $previewToken)) {
                     $post = null;
                 }
                 if ($post) {
@@ -77,7 +77,9 @@ class Quince_BlogPostModuleFrontController extends ModuleFrontController
         $previewToken = (string) Tools::getValue('preview', '');
         $post = $slug !== '' ? Repository::findPostBySlug($slug, $idLang, $idShop, $previewToken !== '') : null;
 
-        if ($post && ($post['status'] ?? '') !== 'published') {
+        // Nie tylko szkic: także opublikowany wpis z przyszłą datą wymaga
+        // tokenu, bo z `?preview=` zapytanie nie filtruje po dacie.
+        if ($post && !Repository::isPostLive($post)) {
             if (!self::isValidPreviewToken((int) $post['id_post'], $previewToken)) {
                 $post = null;
             }
